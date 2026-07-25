@@ -35,6 +35,8 @@
       const line = bootLines[lineIndex];
       if (charIndex <= line.length) {
         logEl.textContent = printed + line.slice(0, charIndex) + '\n';
+        // Rapid keystroke ticks give the boot log a "coding" feel.
+        if (window.SFX && charIndex > 0 && charIndex % 2 === 0) SFX.type();
         charIndex++;
         const pct = Math.round(((lineIndex + charIndex / line.length) / bootLines.length) * 100);
         if (progressEl) progressEl.style.width = Math.min(pct, 100) + '%';
@@ -48,6 +50,27 @@
       }
     }
     typeNext();
+  }
+
+  // Show the intro gate; the boot sequence (with sound) starts on tap so the
+  // browser lets us play audio. Falls back to auto-start if the gate is absent.
+  function initBootGate() {
+    const gate = document.getElementById('boot-gate');
+    const startBtn = document.getElementById('boot-start');
+    const box = document.querySelector('.boot-box');
+
+    function begin() {
+      if (gate) gate.classList.add('hidden');
+      if (box) box.classList.remove('pending');
+      if (window.SFX) SFX.click();
+      runBootSequence();
+    }
+
+    if (startBtn) {
+      startBtn.addEventListener('click', begin, { once: true });
+    } else {
+      begin();
+    }
   }
 
   /* ---------------- Hero typewriter tagline ---------------- */
@@ -283,6 +306,7 @@
       statusEl.textContent = 'Transmitting...';
       statusEl.className = 'rsvp-status';
       submitBtn.disabled = true;
+      showTransmitting();
 
       try {
         const res = await fetch(`${API_BASE}/rsvp`, {
@@ -291,6 +315,7 @@
           body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error('Request failed');
+        hideTransmitting();
         statusEl.textContent = '✔ Response received. See you on August 9th!';
         statusEl.className = 'rsvp-status ok';
         if (window.SFX) SFX.success();
@@ -298,12 +323,29 @@
         showThankYou();
         resumeGuideAfterRsvp();
       } catch (err) {
+        hideTransmitting();
         statusEl.textContent = '✖ Transmission failed. Please try again later.';
         statusEl.className = 'rsvp-status err';
         if (window.SFX) SFX.error();
         submitBtn.disabled = false;
       }
     });
+  }
+
+  // "Please wait" overlay shown while the RSVP is being transmitted. It is not
+  // dismissable by the guest — it closes itself on success or failure.
+  function showTransmitting() {
+    const modal = document.getElementById('transmit-modal');
+    if (!modal) return;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    if (window.SFX) SFX.modal();
+  }
+  function hideTransmitting() {
+    const modal = document.getElementById('transmit-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
   }
 
   // Disable and grey out every field once the RSVP is accepted, so the guest
@@ -369,7 +411,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    runBootSequence();
+    initBootGate();
     initTypewriter();
     initCountdown();
     initNav();

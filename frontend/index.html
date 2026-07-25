@@ -14,7 +14,14 @@
 
   <!-- PRELOADER / BOOT SEQUENCE -->
   <div id="preloader">
-    <div class="boot-box">
+    <div id="boot-gate" class="boot-gate">
+      <button id="boot-start" class="boot-start" type="button">
+        <span class="bs-line">&gt; SYSTEM_READY</span>
+        <span class="bs-main">INITIALIZE</span>
+        <span class="bs-sub">&#9656; tap to establish connection</span>
+      </button>
+    </div>
+    <div class="boot-box pending">
       <pre id="boot-log" class="boot-log"></pre>
       <div class="boot-bar"><span id="boot-progress"></span></div>
     </div>
@@ -461,6 +468,18 @@
       <h3 id="ty-title" class="ty-title">THANK YOU</h3>
       <p class="ty-msg">Your response has been received.<br />See you on <strong>August 9<sup>th</sup></strong>! 🎓</p>
       <button type="button" id="ty-close" class="btn btn-primary ty-btn"><span>Continue</span></button>
+    </div>
+  </div>
+
+  <!-- RSVP TRANSMITTING (please wait) OVERLAY -->
+  <div id="transmit-modal" class="ty-modal transmit-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-live="assertive">
+    <div class="ty-backdrop"></div>
+    <div class="ty-box">
+      <div class="ty-scan" aria-hidden="true"></div>
+      <p class="ty-tag">&gt; UPLINK_ACTIVE</p>
+      <h3 class="ty-title tx-title">TRANSMITTING</h3>
+      <div class="tx-bar" aria-hidden="true"><span></span></div>
+      <p class="ty-msg">Please wait a moment while we transmit your response…<br />the first connection can take up to a minute.</p>
     </div>
   </div>
 
