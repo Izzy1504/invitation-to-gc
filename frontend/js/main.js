@@ -291,15 +291,50 @@
         if (!res.ok) throw new Error('Request failed');
         statusEl.textContent = '✔ Response received. See you on August 9th!';
         statusEl.className = 'rsvp-status ok';
-        form.reset();
+        lockRsvpForm(form);
+        showThankYou();
         resumeGuideAfterRsvp();
       } catch (err) {
         statusEl.textContent = '✖ Transmission failed. Please try again later.';
         statusEl.className = 'rsvp-status err';
-      } finally {
         submitBtn.disabled = false;
       }
     });
+  }
+
+  // Disable and grey out every field once the RSVP is accepted, so the guest
+  // can see what they submitted but can no longer edit or re-send it.
+  function lockRsvpForm(form) {
+    form.classList.add('submitted');
+    form.querySelectorAll('input, select, textarea, button').forEach((el) => {
+      el.disabled = true;
+    });
+  }
+
+  // Cyberpunk "thank you" overlay shown after a successful submit.
+  function showThankYou() {
+    const modal = document.getElementById('thankyou-modal');
+    if (!modal) return;
+    const closeBtn = document.getElementById('ty-close');
+    const backdrop = modal.querySelector('.ty-backdrop');
+
+    function close() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.removeEventListener('keydown', onKey);
+    }
+    function onKey(e) {
+      if (e.key === 'Escape') close();
+    }
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.addEventListener('keydown', onKey);
+    if (closeBtn) {
+      closeBtn.onclick = close;
+      setTimeout(() => closeBtn.focus(), 50);
+    }
+    if (backdrop) backdrop.onclick = close;
   }
 
   /* ---------------- Map route trigger ---------------- */

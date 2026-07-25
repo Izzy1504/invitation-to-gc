@@ -721,6 +721,95 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
 .rsvp-status.ok { color: #4ade80; }
 .rsvp-status.err { color: #f87171; }
 
+/* Greyed-out form after a successful submit */
+.rsvp-form.submitted {
+  opacity: 0.55;
+  filter: grayscale(0.65);
+  pointer-events: none;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+.rsvp-form input:disabled,
+.rsvp-form select:disabled,
+.rsvp-form textarea:disabled,
+.rsvp-form button:disabled {
+  cursor: not-allowed;
+  color: var(--text-dim);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+/* ---------------- RSVP thank-you modal ---------------- */
+.ty-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.ty-modal.open { opacity: 1; visibility: visible; }
+.ty-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 4, 10, 0.82);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.ty-box {
+  position: relative;
+  z-index: 1;
+  width: min(440px, 100%);
+  text-align: center;
+  background: linear-gradient(160deg, var(--panel), var(--bg-alt));
+  border: 1px solid var(--neon-cyan);
+  border-radius: 14px;
+  padding: 2.6rem 2rem 2.2rem;
+  box-shadow: 0 0 40px rgba(0, 246, 255, 0.25),
+              0 0 0 1px rgba(0, 246, 255, 0.15) inset;
+  overflow: hidden;
+  transform: translateY(18px) scale(0.96);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ty-modal.open .ty-box { transform: none; }
+.ty-scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom, transparent 0 2px, rgba(0, 246, 255, 0.04) 2px 4px);
+  pointer-events: none;
+}
+.ty-tag {
+  position: relative;
+  color: var(--neon-pink);
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  margin-bottom: 0.8rem;
+}
+.ty-title {
+  position: relative;
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  color: #fff;
+  letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(0, 246, 255, 0.6);
+  margin-bottom: 0.8rem;
+}
+.ty-msg {
+  position: relative;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 1.8rem;
+}
+.ty-msg strong { color: var(--neon-cyan); }
+.ty-btn { position: relative; min-width: 160px; }
+
 /* ---------------- Footer ---------------- */
 .site-footer {
   text-align: center;
@@ -787,6 +876,7 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
   .section { padding: 4rem 5vw 3rem; }
   .hero { padding-top: 4.5rem; }
   .hero-sub, .hero-university { font-size: 0.85rem; }
+  .tag-line { font-size: 0.72rem; letter-spacing: 0.5px; margin-bottom: 1.1rem; }
 
   .countdown { gap: 0.45rem; }
   .cd-box { min-width: 0; flex: 1 1 20%; padding: 0.55rem 0.4rem; }
@@ -804,4 +894,27 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
 
   .rsvp-form { padding: 1.3rem 1.1rem; }
   .map-wrap { padding: 0.6rem; }
+
+  .ty-box { padding: 2rem 1.4rem 1.8rem; }
+  .ty-title { letter-spacing: 2px; }
+  .ty-btn { width: 100%; }
+}
+
+/* Very small phones — keep the boot tag-line from overflowing. */
+@media (max-width: 360px) {
+  .tag-line { font-size: 0.62rem; }
+  .cd-box span { font-size: 1rem; }
+}
+
+/* Landscape phones / short viewports — let the hero breathe vertically
+   instead of forcing a full 100vh that pushes content off-screen. */
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero {
+    min-height: 0;
+    padding-top: 4.5rem;
+    padding-bottom: 2.5rem;
+  }
+  .countdown { margin-bottom: 1.4rem; }
+  .hero-university { margin-bottom: 1.4rem; }
+  .scroll-hint { display: none; }
 }
