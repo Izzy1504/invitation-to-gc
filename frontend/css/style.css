@@ -108,7 +108,9 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
   animation: bootPulse 2.2s infinite ease-in-out;
   transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
-.boot-start:hover { background: var(--neon-cyan); transform: translateY(-1px); }
+@media (hover: hover) {
+  .boot-start:hover { background: var(--neon-cyan); transform: translateY(-1px); }
+}
 .boot-start:active { transform: scale(0.97); }
 .bs-line { color: var(--neon-pink); font-size: 0.7rem; letter-spacing: 2px; }
 .bs-main {
@@ -120,9 +122,11 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
   text-shadow: 0 0 16px rgba(0, 246, 255, 0.6);
 }
 .bs-sub { font-size: 0.72rem; color: var(--text-dim); letter-spacing: 1px; }
-.boot-start:hover .bs-line,
-.boot-start:hover .bs-main,
-.boot-start:hover .bs-sub { color: #04060d; text-shadow: none; }
+@media (hover: hover) {
+  .boot-start:hover .bs-line,
+  .boot-start:hover .bs-main,
+  .boot-start:hover .bs-sub { color: #04060d; text-shadow: none; }
+}
 @keyframes bootPulse {
   0%, 100% { box-shadow: 0 0 22px rgba(0, 246, 255, 0.18); }
   50% { box-shadow: 0 0 42px rgba(0, 246, 255, 0.5); }
@@ -385,10 +389,12 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
   color: var(--neon-cyan);
   text-shadow: 0 0 8px rgba(0, 246, 255, 0.6);
 }
-.btn-primary:hover {
-  background: var(--neon-cyan);
-  color: #04060d;
-  box-shadow: 0 0 24px rgba(0, 246, 255, 0.7);
+@media (hover: hover) {
+  .btn-primary:hover {
+    background: var(--neon-cyan);
+    color: #04060d;
+    box-shadow: 0 0 24px rgba(0, 246, 255, 0.7);
+  }
 }
 
 .scroll-hint {
@@ -914,19 +920,19 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
   box-shadow: 0 0 14px rgba(0, 246, 255, 0.25);
   transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
-.sfx-toggle:hover {
-  background: var(--neon-cyan);
-  color: #04060d;
-  box-shadow: 0 0 22px rgba(0, 246, 255, 0.6);
+@media (hover: hover) {
+  .sfx-toggle:hover {
+    background: var(--neon-cyan);
+    color: #04060d;
+    box-shadow: 0 0 22px rgba(0, 246, 255, 0.6);
+  }
 }
 .sfx-toggle:active { transform: scale(0.92); }
 .sfx-toggle svg { width: 20px; height: 20px; display: block; }
-.sfx-toggle.muted {
-  color: var(--text-dim);
-  border-color: var(--border);
-  box-shadow: none;
+.sfx-toggle.muted { color: var(--text-dim); border-color: var(--border); box-shadow: none; }
+@media (hover: hover) {
+  .sfx-toggle.muted:hover { background: var(--panel); color: var(--text); }
 }
-.sfx-toggle.muted:hover { background: var(--panel); color: var(--text); }
 
 /* ---------------- Footer ---------------- */
 .site-footer {
@@ -1035,4 +1041,42 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
   .countdown { margin-bottom: 1.4rem; }
   .hero-university { margin-bottom: 1.4rem; }
   .scroll-hint { display: none; }
+}
+
+/* ==========================================================================
+   Mobile / touch optimizations (Android + iOS)
+   ========================================================================== */
+
+/* Comfortable tap targets on touch screens (Apple HIG 44px, Material 48px). */
+@media (max-width: 768px) {
+  .btn { min-height: 46px; }
+  .nav-links a { min-height: 40px; display: flex; align-items: center; }
+  .rsvp-form input,
+  .rsvp-form select,
+  .rsvp-form textarea { min-height: 46px; }
+  .sfx-toggle { width: 46px; height: 46px; } /* keep it easy to tap */
+  .boot-start { padding: 1.5rem 2rem; }
+  .bs-main { font-size: 1.5rem; }
+}
+
+@media (max-width: 360px) {
+  .boot-start { padding: 1.3rem 1.5rem; }
+  .bs-main { font-size: 1.3rem; letter-spacing: 2px; }
+  .bs-sub { font-size: 0.66rem; }
+}
+
+/* Honour reduced-motion — calmer visuals and lighter battery use on phones. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+  .glitch::before,
+  .glitch::after { display: none; }
+  .scanline-overlay { display: none; }
 }

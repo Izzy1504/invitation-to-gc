@@ -4,8 +4,12 @@
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   let w, h, nodes;
-  const NODE_COUNT = 70;
-  const MAX_DIST = 140;
+  // Lighter network on phones / low-power devices to save battery and jank.
+  const smallScreen = Math.min(window.innerWidth, window.innerHeight) < 768;
+  const reduceMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NODE_COUNT = smallScreen ? 38 : 70;
+  const MAX_DIST = smallScreen ? 110 : 140;
 
   function resize() {
     w = canvas.width = window.innerWidth;
@@ -21,15 +25,8 @@
     }));
   }
 
-  function step() {
+  function render() {
     ctx.clearRect(0, 0, w, h);
-
-    for (const n of nodes) {
-      n.x += n.vx;
-      n.y += n.vy;
-      if (n.x < 0 || n.x > w) n.vx *= -1;
-      if (n.y < 0 || n.y > h) n.vy *= -1;
-    }
 
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
@@ -53,15 +50,29 @@
       ctx.arc(n.x, n.y, 1.6, 0, Math.PI * 2);
       ctx.fill();
     }
+  }
 
+  function step() {
+    for (const n of nodes) {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > w) n.vx *= -1;
+      if (n.y < 0 || n.y > h) n.vy *= -1;
+    }
+    render();
     requestAnimationFrame(step);
   }
 
   window.addEventListener('resize', () => {
     resize();
+    if (reduceMotion) render(); // keep the static frame filling the screen
   });
 
   resize();
   initNodes();
-  step();
+  if (reduceMotion) {
+    render(); // one static frame, no animation loop
+  } else {
+    step();
+  }
 })();
