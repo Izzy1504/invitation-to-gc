@@ -190,15 +190,15 @@
   }
 
   /* ---------------- Locked flow (RSVP gate) ---------------- */
-  // After the intro the whole page is LOCKED: no manual scrolling up or down by
-  // any means (wheel, touch, keyboard, scrollbar drag). The guest reaches the
-  // form only via the "Confirm Attendance" button / RSVP nav link (our own glide
-  // still works while locked). Nothing scrolls freely until they SUBMIT the RSVP
-  // form — then the page unlocks and glides down to Event for free exploration.
+  // After the intro the guest may scroll freely from the top through the WHOLE
+  // RSVP section (so the entire form — including the Submit button — is always
+  // reachable, even on phones where the form is taller than the screen), but
+  // cannot scroll PAST the RSVP section into the sections below until they SUBMIT
+  // the form. On submit the page unlocks and glides down to Event. The
+  // "Confirm Attendance" button / RSVP nav link still glide there directly.
   const GUIDE_SCROLL_DURATION = 1500;  // ms glide (higher = smoother)
   const GATED_SECTIONS = ['event', 'schedule', 'map']; // reachable only after RSVP
-  let locked = false;                  // is manual scrolling blocked?
-  let lockedY = 0;                     // the exact Y the guest is held at
+  let locked = false;                  // is forward scrolling gated?
   let isGliding = false;               // true only while our own glide animates
 
   function easeInOutCubic(t) {
@@ -217,7 +217,6 @@
   function smoothScrollTo(targetY, duration) {
     const startY = window.scrollY || window.pageYOffset;
     const distance = targetY - startY;
-    lockedY = targetY;
     if (Math.abs(distance) < 2) return;
     isGliding = true;
     let startTime = null;
@@ -233,38 +232,33 @@
     requestAnimationFrame(frame);
   }
 
-  // --- Full scroll lock: blocks EVERY way of scrolling (wheel, touch, keyboard
-  //     and dragging the scrollbar) in both directions, but never our own
-  //     glides. Typing in form fields still works. ---
-  const SCROLL_KEYS = new Set([' ', 'Spacebar', 'PageUp', 'PageDown', 'End', 'Home', 'ArrowUp', 'ArrowDown']);
-  function blockWheel(e) { if (locked && !isGliding) e.preventDefault(); }
-  function blockKeys(e) {
-    if (!locked || isGliding) return;
-    const el = e.target;
-    if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
-    if (SCROLL_KEYS.has(e.key)) e.preventDefault();
+  // --- Forward gate: clamp the scroll position so the guest can reach the whole
+  //     RSVP section but not the gated sections beneath it. We never disable
+  //     scrolling (that stranded the submit button off-screen on phones) — we
+  //     only pull the page back if it goes past the allowed maximum. ---
+
+  // Highest Y allowed before submitting: the bottom of the RSVP section aligned
+  // to the bottom of the viewport, keeping gated content just out of view.
+  function gatedMaxY() {
+    const rsvp = document.getElementById('rsvp');
+    if (!rsvp) return Number.POSITIVE_INFINITY;
+    const bottom = rsvp.getBoundingClientRect().bottom + window.scrollY;
+    return Math.max(0, Math.ceil(bottom - window.innerHeight));
   }
-  // Catches anything the handlers miss (scrollbar drag / momentum fling): snap
-  // straight back to the held position.
+
   function scrollGuard() {
-    if (locked && !isGliding && Math.abs(window.scrollY - lockedY) > 1) {
-      window.scrollTo(0, lockedY);
-    }
+    if (!locked || isGliding) return;
+    const maxY = gatedMaxY();
+    if (window.scrollY > maxY) window.scrollTo(0, maxY);
   }
   function lockScroll() {
     if (locked) return;
     locked = true;
-    window.addEventListener('wheel', blockWheel, { passive: false });
-    window.addEventListener('touchmove', blockWheel, { passive: false });
-    window.addEventListener('keydown', blockKeys, false);
     window.addEventListener('scroll', scrollGuard, { passive: true });
     document.body.classList.add('guide-locked');
   }
   function unlockScroll() {
     locked = false;
-    window.removeEventListener('wheel', blockWheel, { passive: false });
-    window.removeEventListener('touchmove', blockWheel, { passive: false });
-    window.removeEventListener('keydown', blockKeys, false);
     window.removeEventListener('scroll', scrollGuard, { passive: true });
     document.body.classList.remove('guide-locked');
   }
@@ -272,7 +266,6 @@
   // Start held at the very top (Home) with everything locked.
   function startGuidedFlow() {
     window.scrollTo(0, 0);
-    lockedY = 0;
     requestAnimationFrame(lockScroll);
   }
 
