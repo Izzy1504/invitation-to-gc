@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RSVP Admin // Access Console</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  body { background:#04060d; color:#d7f5ff; font-family:'Share Tech Mono',monospace; padding:2rem; }
+  h1 { font-family:'Orbitron',sans-serif; color:#00f6ff; text-shadow:0 0 10px rgba(0,246,255,.6); }
+  input { background:#0a1120; border:1px solid #123a55; color:#d7f5ff; padding:.6rem; border-radius:6px; font-family:inherit; }
+  button { background:#00f6ff; color:#04060d; border:none; padding:.6rem 1.2rem; border-radius:6px; cursor:pointer; font-family:inherit; margin-left:.5rem; }
+  table { width:100%; border-collapse:collapse; margin-top:1.5rem; }
+  th, td { border:1px solid #123a55; padding:.6rem; text-align:left; font-size:.85rem; }
+  th { color:#00f6ff; }
+  #status { margin-top:1rem; color:#f87171; }
+</style>
+</head>
+<body>
+  <h1>RSVP Access Console</h1>
+  <p>Enter admin key to view guest responses.</p>
+  <div>
+    <input type="password" id="adminKey" placeholder="Admin key" />
+    <button id="loadBtn">Load Responses</button>
+  </div>
+  <p id="status"></p>
+  <table id="rsvpTable" style="display:none">
+    <thead>
+      <tr><th>Name</th><th>Attending</th><th>Guests</th><th>Message</th><th>Submitted</th></tr>
+    </thead>
+    <tbody id="rsvpBody"></tbody>
+  </table>
+
+  <script src="js/config.js"></script>
+  <script>
+    // API base is resolved by js/config.js: a relative '/api' locally, or the
+    // full Render backend URL when this page is hosted on GitHub Pages.
+    const API_BASE = window.API_BASE || '/api';
+
+    document.getElementById('loadBtn').addEventListener('click', async () => {
+      const key = document.getElementById('adminKey').value;
+      const status = document.getElementById('status');
+      const table = document.getElementById('rsvpTable');
+      const body = document.getElementById('rsvpBody');
+      status.textContent = 'Loading...';
+      try {
+        const res = await fetch(`${API_BASE}/rsvp`, { headers: { 'X-Admin-Key': key } });
+        if (!res.ok) throw new Error('Unauthorized or server error');
+        const list = await res.json();
+        body.innerHTML = list.map(r => `
+          <tr>
+            <td>${r.guestName}</td>
+            <td>${r.attending}</td>
+            <td>${r.guestCount}</td>
+            <td>${r.message || ''}</td>
+            <td>${new Date(r.submittedAt).toLocaleString()}</td>
+          </tr>`).join('');
+        table.style.display = 'table';
+        status.textContent = `${list.length} response(s) loaded.`;
+      } catch (err) {
+        status.textContent = 'Failed to load: ' + err.message;
+        table.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

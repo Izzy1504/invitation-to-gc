@@ -1,0 +1,13 @@
+{
+  "name": "invitation-to-gc-backend",
+  "version": "1.0.0",
+  "description": "Backend API + static server for Đoàn Minh Khôi's graduation invitation site",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

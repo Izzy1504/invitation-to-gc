@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment / secrets
+.env
+**/.env
+
+# Local RSVP data backup (do not publish)
+backend/data/*.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db

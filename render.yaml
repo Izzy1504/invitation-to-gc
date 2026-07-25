@@ -1,0 +1,28 @@
+# Render.com Blueprint — deploys the graduation invitation site (Node/Express).
+# 1. Push this repo to GitHub.
+# 2. On https://dashboard.render.com → New → Blueprint → pick this repo.
+# 3. Render builds and runs backend/server.js, which also serves the frontend.
+services:
+  - type: web
+    name: invitation-to-gc
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Set this to your GitHub Pages origin once known, e.g.
+      # https://<username>.github.io  — or leave "*" to allow any origin.
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: ADMIN_KEY
+        sync: false
+      # Google Apps Script "Web app" URL that appends each RSVP to your Sheet.
+      # Set the real value in the Render dashboard (Environment tab).
+      - key: SHEETS_WEBHOOK_URL
+        sync: false
+      # Optional shared secret; must match the SECRET constant in the Apps Script.
+      - key: SHEETS_WEBHOOK_SECRET
+        sync: false
