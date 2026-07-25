@@ -43,6 +43,7 @@
         printed += line + '\n';
         lineIndex++;
         charIndex = 0;
+        if (window.SFX) SFX.boot();
         setTimeout(typeNext, 120);
       }
     }
@@ -59,6 +60,7 @@
     function type() {
       if (i <= text.length) {
         el.textContent = text.slice(0, i);
+        if (window.SFX && i > 0) SFX.type();
         i++;
         setTimeout(type, 28);
       }
@@ -291,12 +293,14 @@
         if (!res.ok) throw new Error('Request failed');
         statusEl.textContent = '✔ Response received. See you on August 9th!';
         statusEl.className = 'rsvp-status ok';
+        if (window.SFX) SFX.success();
         lockRsvpForm(form);
         showThankYou();
         resumeGuideAfterRsvp();
       } catch (err) {
         statusEl.textContent = '✖ Transmission failed. Please try again later.';
         statusEl.className = 'rsvp-status err';
+        if (window.SFX) SFX.error();
         submitBtn.disabled = false;
       }
     });
@@ -329,6 +333,7 @@
 
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
+    if (window.SFX) SFX.modal();
     document.addEventListener('keydown', onKey);
     if (closeBtn) {
       closeBtn.onclick = close;
@@ -354,6 +359,15 @@
     observer.observe(wrap);
   }
 
+  /* ---------------- Interactive sound effects ---------------- */
+  function initSoundEffects() {
+    if (!window.SFX) return;
+    document.querySelectorAll('.btn, .nav-links a, .nav-logo').forEach((el) => {
+      el.addEventListener('mouseenter', () => SFX.hover());
+      el.addEventListener('pointerdown', () => SFX.click());
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     runBootSequence();
     initTypewriter();
@@ -363,5 +377,6 @@
     initMissionLoaders();
     initMapAnimation();
     initRsvpForm();
+    initSoundEffects();
   });
 })();

@@ -810,6 +810,40 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
 .ty-msg strong { color: var(--neon-cyan); }
 .ty-btn { position: relative; min-width: 160px; }
 
+/* ---------------- Sound-effects toggle ---------------- */
+.sfx-toggle {
+  position: fixed;
+  z-index: 1500;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 17, 32, 0.8);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 10px;
+  color: var(--neon-cyan);
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 14px rgba(0, 246, 255, 0.25);
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.sfx-toggle:hover {
+  background: var(--neon-cyan);
+  color: #04060d;
+  box-shadow: 0 0 22px rgba(0, 246, 255, 0.6);
+}
+.sfx-toggle:active { transform: scale(0.92); }
+.sfx-toggle svg { width: 20px; height: 20px; display: block; }
+.sfx-toggle.muted {
+  color: var(--text-dim);
+  border-color: var(--border);
+  box-shadow: none;
+}
+.sfx-toggle.muted:hover { background: var(--panel); color: var(--text); }
+
 /* ---------------- Footer ---------------- */
 .site-footer {
   text-align: center;
