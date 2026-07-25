@@ -10,10 +10,18 @@
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const NODE_COUNT = smallScreen ? 38 : 70;
   const MAX_DIST = smallScreen ? 110 : 140;
+  // Render at device pixel density (capped at 2) so lines stay crisp on
+  // high-DPI flagships without paying the full 3x-4x fill cost.
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
 
   function resize() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = Math.floor(w * DPR);
+    canvas.height = Math.floor(h * DPR);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); // draw using CSS-pixel coordinates
   }
 
   function initNodes() {
@@ -52,10 +60,15 @@
     }
   }
 
-  function step() {
+  let lastT = performance.now();
+  function step(now) {
+    // Normalise motion to ~60fps units so speed is identical on 60/90/120Hz
+    // displays (otherwise particles race on high-refresh phones).
+    const dt = Math.min((now - lastT) / 16.667, 3);
+    lastT = now;
     for (const n of nodes) {
-      n.x += n.vx;
-      n.y += n.vy;
+      n.x += n.vx * dt;
+      n.y += n.vy * dt;
       if (n.x < 0 || n.x > w) n.vx *= -1;
       if (n.y < 0 || n.y > h) n.vy *= -1;
     }
@@ -73,6 +86,7 @@
   if (reduceMotion) {
     render(); // one static frame, no animation loop
   } else {
-    step();
+    lastT = performance.now();
+    requestAnimationFrame(step);
   }
 })();
