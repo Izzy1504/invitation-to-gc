@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Khôi · Lễ Tốt Nghiệp // 请柬</title>
+<meta name="description" content="Thiệp mời Lễ Tốt Nghiệp của Đoàn Minh Khôi — Đại học Sài Gòn, 09/08/2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/xianxia.css" />
+</head>
+<body>
+
+  <!-- BACKGROUND LAYERS -->
+  <canvas id="sky-canvas"></canvas>
+  <div class="moon" aria-hidden="true"></div>
+  <div class="mountains" aria-hidden="true">
+    <svg viewBox="0 0 1440 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- distant range -->
+      <path fill="#2a323a" opacity="0.5" d="M0,400 L0,235 L150,150 L300,220 L470,120 L640,215 L820,130 L1010,220 L1200,140 L1380,215 L1440,180 L1440,400 Z"/>
+      <!-- mid range -->
+      <path fill="#181d23" d="M0,400 L0,285 L180,200 L360,285 L540,190 L740,285 L960,205 L1180,290 L1380,215 L1440,250 L1440,400 Z"/>
+      <g fill="#e9eff4" opacity="0.9">
+        <path d="M522,214 L540,190 L558,214 L550,210 L544,217 L536,210 L530,215 Z"/>
+        <path d="M942,229 L960,205 L978,229 L970,225 L964,232 L956,225 L950,230 Z"/>
+      </g>
+      <!-- front range -->
+      <path fill="#080b0e" d="M0,400 L0,330 L220,235 L430,335 L640,225 L860,340 L1080,250 L1300,345 L1440,285 L1440,400 Z"/>
+      <g fill="#eef3f6" opacity="0.96">
+        <path d="M198,265 L220,235 L242,265 L232,261 L224,269 L214,261 L206,267 Z"/>
+        <path d="M618,255 L640,225 L662,255 L652,251 L644,259 L634,251 L626,257 Z"/>
+        <path d="M1058,280 L1080,250 L1102,280 L1092,276 L1084,284 L1074,276 L1066,282 Z"/>
+      </g>
+    </svg>
+  </div>
+  <div class="mist mist-1" aria-hidden="true"></div>
+  <div class="mist mist-2" aria-hidden="true"></div>
+  <div class="mist mist-3" aria-hidden="true"></div>
+  <div class="base-fog" aria-hidden="true"></div>
+  <div class="sky-callig" aria-hidden="true">
+    <span class="kchar" data-depth="0.05"><b>道</b></span>
+    <span class="kchar" data-depth="0.03"><b>仙</b></span>
+    <span class="kchar" data-depth="0.06"><b>雪</b></span>
+    <span class="kchar" data-depth="0.04"><b>心</b></span>
+    <span class="kchar" data-depth="0.05"><b>夢</b></span>
+    <span class="kchar" data-depth="0.035"><b>恆</b></span>
+  </div>
+  <div class="paper-overlay" aria-hidden="true"></div>
+
+  <!-- ENTER GATE -->
+  <div id="enter-gate">
+    <div class="enter-inner">
+      <div class="enter-seal" id="enter-btn" role="button" tabindex="0" aria-label="Nhập — vào thiệp mời"><span>入</span></div>
+      <div class="enter-title">請 入 仙 境</div>
+      <div class="enter-sub">Chạm để mở thiệp · tap to enter</div>
+    </div>
+  </div>
+
+  <!-- BRAND -->
+  <div class="brand" aria-hidden="true">墨 · khôi <span class="en">GRADUATION · 2026</span></div>
+
+  <!-- COUPLETS -->
+  <div class="couplet left" aria-hidden="true">十年寒窗磨一剑</div>
+  <div class="couplet right" aria-hidden="true">今朝金榜题名时</div>
+
+  <main>
+    <!-- HERO -->
+    <section id="hero" class="hero">
+      <div class="hero-seal" aria-hidden="true">賀</div>
+      <p class="hero-tag">請 柬</p>
+      <p class="hero-sub">Trân trọng kính mời đến Lễ Tốt Nghiệp của</p>
+      <h1 class="hero-name">Đoàn Minh Khôi</h1>
+      <p class="hero-name-en">Graduation Ceremony</p>
+      <p class="hero-univ">Đại học Sài Gòn <span class="sep">◇</span> Khóa 2026</p>
+      <p class="hero-bless cn-emph">鵬 程 萬 里</p>
+      <p class="hero-bless-vi">Bằng trình vạn lý · nguyện tiền đồ xán lạn</p>
+
+      <div class="countdown" id="countdown" aria-label="Đếm ngược đến ngày lễ">
+        <div class="cd-box"><b id="cd-days">00</b><i>Ngày</i></div>
+        <div class="cd-box"><b id="cd-hours">00</b><i>Giờ</i></div>
+        <div class="cd-box"><b id="cd-mins">00</b><i>Phút</i></div>
+        <div class="cd-box"><b id="cd-secs">00</b><i>Giây</i></div>
+      </div>
+
+      <a href="#rsvp" class="btn">Xác nhận tham dự</a>
+      <div class="scroll-hint">︾ CUỘN XUỐNG ︾</div>
+    </section>
+
+    <!-- EVENT -->
+    <section id="event" class="section">
+      <div class="sect-head reveal">
+        <span class="sect-cn">吉 时 良 辰</span>
+        <span class="sect-en">Thông tin buổi lễ</span>
+        <div class="divider"></div>
+      </div>
+      <div class="event-grid">
+        <div class="tablet panel reveal">
+          <div class="cn">日</div>
+          <h4>Ngày</h4>
+          <p>Chủ Nhật</p>
+          <p class="hi">09 · 08 · 2026</p>
+        </div>
+        <div class="tablet panel reveal">
+          <div class="cn">时</div>
+          <h4>Thời gian</h4>
+          <p class="hi">11:00 – 13:00</p>
+          <p>Vui lòng đến sớm 30 phút</p>
+        </div>
+        <div class="tablet panel reveal">
+          <div class="cn">地</div>
+          <h4>Địa điểm</h4>
+          <p class="hi">Hội Trường A</p>
+          <p>Đại học Sài Gòn (SGU)</p>
+        </div>
+        <div class="tablet panel reveal">
+          <div class="cn">址</div>
+          <h4>Địa chỉ</h4>
+          <p>273 An Dương Vương</p>
+          <p>Phường 3, Quận 5, TP.HCM</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section id="schedule" class="section">
+      <div class="sect-head reveal">
+        <span class="sect-cn">典 礼 流 程</span>
+        <span class="sect-en">Trình tự buổi lễ</span>
+        <div class="divider"></div>
+      </div>
+      <div class="timeline">
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-time">10:30</div>
+          <h4>Đón khách &amp; điểm danh</h4>
+          <p>Vào cổng 273 An Dương Vương, có hỗ trợ chỗ ngồi.</p>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-time">11:00</div>
+          <h4>Khai mạc</h4>
+          <p>Chào cờ, phát biểu chào mừng và khai mạc.</p>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-time">11:30</div>
+          <h4>Trao bằng tốt nghiệp</h4>
+          <p>Tân cử nhân lên sân khấu nhận bằng.</p>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-time">12:30</div>
+          <h4>Bế mạc &amp; chụp hình</h4>
+          <p>Phát biểu bế mạc, chụp hình trước Hội Trường A.</p>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-time">13:00</div>
+          <h4>Kết thúc</h4>
+          <p>Hẹn gặp nhau ở buổi liên hoan sau lễ!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLESSING -->
+    <section id="blessing" class="section blessing">
+      <div class="sect-head reveal">
+        <span class="sect-cn">祝 福 語</span>
+        <span class="sect-en">Lời chúc mừng</span>
+        <div class="divider"></div>
+      </div>
+      <p class="bless-lead reveal">Mừng ngày <strong>Khôi</strong> khắc tên lên bảng vàng — nguyện chí lớn tung bay, tiền đồ tựa gấm.</p>
+      <div class="bless-grid">
+        <div class="bless-card panel reveal">
+          <span class="bc-cn cn-emph">鵬程萬里</span>
+          <span class="bc-py">péng chéng wàn lǐ</span>
+          <span class="bc-vi">Bằng trình vạn lý — tương lai rộng mở vạn dặm</span>
+        </div>
+        <div class="bless-card panel reveal">
+          <span class="bc-cn cn-emph">前程似錦</span>
+          <span class="bc-py">qián chéng sì jǐn</span>
+          <span class="bc-vi">Tiền đồ tựa gấm — mai sau rực rỡ như gấm hoa</span>
+        </div>
+        <div class="bless-card panel reveal">
+          <span class="bc-cn cn-emph">乘風破浪</span>
+          <span class="bc-py">chéng fēng pò làng</span>
+          <span class="bc-vi">Cưỡi gió rẽ sóng — vượt ngàn phong ba tiến bước</span>
+        </div>
+        <div class="bless-card panel reveal">
+          <span class="bc-cn cn-emph">未來可期</span>
+          <span class="bc-py">wèi lái kě qī</span>
+          <span class="bc-vi">Tương lai đáng chờ — ngày mai nhất định huy hoàng</span>
+        </div>
+      </div>
+      <p class="bless-foot cn-emph reveal">前 途 無 量</p>
+      <p class="bless-foot-vi reveal">— Tiền đồ vô lượng · vạn sự hanh thông —</p>
+    </section>
+
+    <!-- MAP -->
+    <section id="map" class="section">
+      <div class="sect-head reveal">
+        <span class="sect-cn">尋 路 圖</span>
+        <span class="sect-en">Đường đến buổi lễ</span>
+        <div class="divider"></div>
+      </div>
+      <p class="map-note reveal">Đại học Sài Gòn — cơ sở Quận 5. Theo lối sáng đến <strong>Hội Trường A</strong>.</p>
+      <p class="map-note-sub reveal"><strong>Lối 2</strong> dành cho khách <strong>đi bộ</strong> từ Cổng 6. Nếu đi <strong>xe máy</strong>, vui lòng gửi tại <strong>Bãi xe SGU</strong> rồi theo <strong>Lối 3</strong>.</p>
+
+      <div class="xmap-wrap panel reveal">
+        <svg id="campus-map" viewBox="0 0 1000 780" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bản đồ khuôn viên Đại học Sài Gòn">
+          <defs>
+            <pattern id="gridPattern" width="25" height="25" patternUnits="userSpaceOnUse">
+              <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#16202a" stroke-width="1"/>
+            </pattern>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <marker id="arrow-cyan" viewBox="0 0 10 10" markerWidth="7" markerHeight="7" refX="8" refY="5" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#eef3f6" />
+            </marker>
+            <marker id="arrow-pink" viewBox="0 0 10 10" markerWidth="7" markerHeight="7" refX="8" refY="5" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#aeb9c0" />
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 10 10" markerWidth="7" markerHeight="7" refX="8" refY="5" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#d84b3f" />
+            </marker>
+          </defs>
+
+          <rect x="0" y="0" width="1000" height="780" fill="url(#gridPattern)" />
+          <rect x="35" y="50" width="930" height="685" fill="none" stroke="#2b353d" stroke-width="2" stroke-dasharray="6 4" />
+
+          <circle cx="620" cy="42" r="9" class="gate-marker gate-pink" />
+          <text x="620" y="26" class="gate-label">Cổng 6 — Nguyễn Trãi</text>
+          <text x="620" y="14" class="gate-label small">(Gửi xe máy)</text>
+
+          <rect x="725" y="70" width="210" height="135" class="bld bld-highlight" />
+          <text x="830" y="142" class="bld-label">Dãy E</text>
+
+          <rect x="55" y="70" width="48" height="55" class="bld" />
+          <text x="79" y="95" class="bld-label small">Bảo</text>
+          <text x="79" y="108" class="bld-label small">vệ</text>
+          <rect x="105" y="70" width="120" height="55" class="bld" />
+          <text x="165" y="102" class="bld-label small">THƯ QUÁN</text>
+
+          <rect x="228" y="68" width="395" height="50" class="bld bld-highlight" />
+          <text x="425" y="99" class="bld-label">Dãy A</text>
+          <rect x="228" y="120" width="90" height="52" class="bld" />
+          <text x="273" y="150" class="bld-label small">S.A03</text>
+          <rect x="320" y="120" width="48" height="52" class="bld" />
+          <text x="344" y="144" class="bld-label tiny">CẦU</text>
+          <text x="344" y="155" class="bld-label tiny">THANG</text>
+          <rect x="370" y="120" width="78" height="52" class="bld" />
+          <text x="409" y="150" class="bld-label small">S.A02</text>
+          <rect x="450" y="120" width="48" height="52" class="bld" />
+          <text x="474" y="144" class="bld-label tiny">CẦU</text>
+          <text x="474" y="155" class="bld-label tiny">THANG</text>
+          <rect x="560" y="120" width="55" height="52" class="bld" />
+          <text x="587" y="150" class="bld-label small">NVS</text>
+
+          <rect x="55" y="135" width="115" height="62" class="bld" />
+          <text x="112" y="160" class="bld-label tiny">VPK Nghệ Thuật</text>
+          <text x="112" y="174" class="bld-label tiny">và khu NT</text>
+
+          <rect x="175" y="180" width="95" height="38" class="bld" />
+          <text x="222" y="204" class="bld-label small">S.A05</text>
+
+          <rect x="55" y="200" width="95" height="95" class="bld" />
+          <text x="102" y="242" class="bld-label tiny">VPK</text>
+          <text x="102" y="256" class="bld-label tiny">Mỹ Thuật</text>
+
+          <rect x="155" y="222" width="105" height="103" class="bld bld-venue" id="venue-hall" />
+          <text x="207" y="268" class="bld-label venue-label">HỘI TRƯỜNG</text>
+          <text x="207" y="290" class="bld-label venue-label big">A</text>
+
+          <rect x="440" y="205" width="105" height="55" class="bld" />
+          <text x="492" y="237" class="bld-label small">S.A01</text>
+
+          <rect x="558" y="150" width="60" height="42" class="bld" />
+          <text x="588" y="176" class="bld-label small">A016</text>
+          <rect x="558" y="196" width="60" height="54" class="bld" />
+          <text x="588" y="218" class="bld-label tiny">Phòng</text>
+          <text x="588" y="232" class="bld-label tiny">họp A</text>
+          <rect x="558" y="254" width="60" height="54" class="bld" />
+          <text x="588" y="276" class="bld-label tiny">Kỹ</text>
+          <text x="588" y="290" class="bld-label tiny">thuật</text>
+
+          <rect x="50" y="312" width="60" height="52" class="bld" />
+          <text x="80" y="332" class="bld-label tiny">Nhà Vệ</text>
+          <text x="80" y="346" class="bld-label tiny">Sinh nữ</text>
+          <rect x="112" y="312" width="68" height="52" class="bld" />
+          <text x="146" y="332" class="bld-label tiny">Nhà Vệ</text>
+          <text x="146" y="346" class="bld-label tiny">Sinh Nam</text>
+
+          <text x="245" y="305" class="bld-label small">S.A04</text>
+          <rect x="185" y="318" width="112" height="46" class="bld bld-highlight" />
+          <text x="241" y="346" class="bld-label small">Hội trường B</text>
+
+          <rect x="350" y="316" width="215" height="54" class="bld bld-highlight" />
+          <text x="457" y="348" class="bld-label">Dãy B</text>
+
+          <rect x="150" y="388" width="26" height="150" class="bld" />
+          <text x="163" y="463" class="bld-label tiny" transform="rotate(-90 163 463)">Bồn Nước uống</text>
+
+          <rect x="185" y="380" width="70" height="36" class="bld" />
+          <text x="220" y="395" class="bld-label tiny">Khu tự</text>
+          <text x="220" y="408" class="bld-label tiny">học</text>
+          <rect x="185" y="420" width="70" height="70" class="bld" />
+          <text x="220" y="460" class="bld-label small">KLF</text>
+          <rect x="185" y="494" width="70" height="40" class="bld" />
+          <text x="220" y="512" class="bld-label tiny">Khu tự</text>
+          <text x="220" y="525" class="bld-label tiny">học</text>
+
+          <rect x="268" y="405" width="98" height="100" class="bld bld-court" />
+          <text x="317" y="446" class="bld-label tiny">Sân Bóng</text>
+          <text x="317" y="460" class="bld-label tiny">Chuyền</text>
+
+          <text x="405" y="420" class="bld-label small">S.B01</text>
+          <circle cx="405" cy="445" r="11" class="court-dot" />
+          <text x="405" y="492" class="bld-label small">S.B02</text>
+          <circle cx="405" cy="508" r="11" class="court-dot" />
+
+          <rect x="455" y="432" width="100" height="70" class="bld" />
+          <text x="505" y="470" class="bld-label small">S.B03</text>
+
+          <rect x="560" y="380" width="72" height="130" class="bld bld-highlight" />
+          <text x="596" y="445" class="bld-label" transform="rotate(-90 596 445)">CĂN TIN</text>
+
+          <rect x="655" y="222" width="62" height="185" class="bld" />
+          <text x="686" y="314" class="bld-label tiny" transform="rotate(-90 686 314)">Khu giữ xe HS–SV–khách (5)</text>
+
+          <rect x="722" y="222" width="48" height="90" class="bld" />
+          <text x="746" y="267" class="bld-label tiny" transform="rotate(-90 746 267)">Sân Bóng Chuyền</text>
+          <rect x="773" y="222" width="48" height="90" class="bld" />
+          <text x="797" y="267" class="bld-label tiny" transform="rotate(-90 797 267)">Nhà Bóng Bàn</text>
+
+          <rect x="655" y="430" width="62" height="135" class="bld" />
+          <text x="686" y="497" class="bld-label tiny" transform="rotate(-90 686 497)">Sân Bóng Rổ</text>
+          <rect x="722" y="430" width="52" height="135" class="bld" />
+          <text x="748" y="497" class="bld-label tiny" transform="rotate(-90 748 497)">Sân Cầu Lông</text>
+          <rect x="777" y="430" width="44" height="135" class="bld" />
+          <text x="799" y="497" class="bld-label tiny" transform="rotate(-90 799 497)">Sân</text>
+
+          <rect x="185" y="528" width="112" height="46" class="bld bld-highlight" />
+          <text x="241" y="556" class="bld-label small">Hội trường C</text>
+
+          <rect x="350" y="525" width="215" height="54" class="bld bld-highlight" />
+          <text x="457" y="557" class="bld-label">Dãy C</text>
+
+          <rect x="305" y="585" width="150" height="42" class="bld" />
+          <text x="380" y="602" class="bld-label tiny">Khu giữ xe</text>
+          <text x="380" y="615" class="bld-label tiny">Cán bộ - CVC</text>
+
+          <rect x="170" y="632" width="170" height="82" class="bld bld-highlight" />
+          <text x="255" y="668" class="bld-label small">Khu Hiệu Bộ</text>
+          <text x="255" y="688" class="bld-label small">(Khu HB)</text>
+
+          <rect x="380" y="678" width="52" height="45" class="bld" />
+          <text x="406" y="704" class="bld-label tiny">Bảo vệ</text>
+
+          <rect x="455" y="660" width="115" height="60" class="bld bld-highlight" />
+          <text x="512" y="694" class="bld-label">Dãy D</text>
+
+          <rect x="655" y="600" width="175" height="100" class="bld" />
+          <text x="742" y="655" class="bld-label">Sân Bóng Đá</text>
+
+          <circle cx="390" cy="730" r="12" class="gate-marker gate-main" id="gate-main" />
+          <text x="390" y="754" class="gate-label main">Cổng 273 — An Dương Vương</text>
+          <text x="390" y="766" class="gate-label small">(Cổng chính)</text>
+
+          <circle cx="690" cy="730" r="9" class="gate-marker" />
+          <text x="690" y="754" class="gate-label">Cổng 275 — An Dương Vương</text>
+
+          <rect x="862" y="250" width="98" height="74" class="bld bike-park-box" />
+          <text x="911" y="282" class="bld-label small park-note">SGU</text>
+          <text x="911" y="302" class="bld-label small park-note">bãi xe</text>
+
+          <path id="route-path" d="M 390 720 L 390 640 L 323 605 L 323 515 L 405 515 L 405 385 L 310 385 L 310 290 L 260 290" marker-end="url(#arrow-cyan)" />
+          <path id="route-moto" d="M 620 52 L 620 60 L 634 60 L 634 310 L 545 310 L 545 266 L 320 266 L 260 266" marker-end="url(#arrow-pink)" />
+          <path id="route-park" d="M 862 288 L 648 288 L 648 314 L 340 314 L 340 304 L 260 304" marker-end="url(#arrow-green)" />
+
+          <g class="travel-arrow" filter="url(#glow)">
+            <path d="M -8 -6 L 9 0 L -8 6 Z" fill="#eef3f6" />
+            <animateMotion dur="5s" repeatCount="indefinite" rotate="auto" calcMode="linear">
+              <mpath href="#route-path" />
+            </animateMotion>
+          </g>
+          <g class="travel-arrow" filter="url(#glow)">
+            <path d="M -8 -6 L 9 0 L -8 6 Z" fill="#aeb9c0" />
+            <animateMotion dur="4.5s" repeatCount="indefinite" rotate="auto" calcMode="linear">
+              <mpath href="#route-moto" />
+            </animateMotion>
+          </g>
+          <g class="travel-arrow" filter="url(#glow)">
+            <path d="M -8 -6 L 9 0 L -8 6 Z" fill="#d84b3f" />
+            <animateMotion dur="4.5s" repeatCount="indefinite" rotate="auto" calcMode="linear">
+              <mpath href="#route-park" />
+            </animateMotion>
+          </g>
+        </svg>
+      </div>
+
+      <div class="map-legend reveal">
+        <span><i class="lg-venue"></i> Hội Trường A</span>
+        <span><i class="lg-gate"></i> Cổng</span>
+        <span><i class="lg-r1"></i> Lối 1 · Cổng 273 → Hội Trường A</span>
+        <span><i class="lg-r2"></i> Lối 2 · Cổng 6 (đi bộ) → Hội Trường A</span>
+        <span><i class="lg-r3"></i> Lối 3 · Bãi xe SGU → Hội Trường A</span>
+      </div>
+
+      <div class="map-actions reveal">
+        <a class="btn" href="https://www.google.com/maps/search/?api=1&query=%C4%90%E1%BA%A1i%20h%E1%BB%8Dc%20S%C3%A0i%20G%C3%B2n%20273%20An%20D%C6%B0%C6%A1ng%20V%C6%B0%C6%A1ng" target="_blank" rel="noopener">Mở Google Maps</a>
+      </div>
+    </section>
+
+    <!-- RSVP -->
+    <section id="rsvp" class="section">
+      <div class="sect-head reveal">
+        <span class="sect-cn">回 帖</span>
+        <span class="sect-en">Xác nhận tham dự</span>
+        <div class="divider"></div>
+      </div>
+      <p class="rsvp-note reveal">Hiện nhà trường cho phép <strong>2 chỗ ngồi</strong>, mọi người điền giúp mình để cùng chụp hình lưu niệm nhé. Xin đa tạ :3</p>
+
+      <form id="rsvp-form" class="rsvp-form panel reveal">
+        <div class="form-row">
+          <label for="guestName">Họ và tên</label>
+          <input type="text" id="guestName" name="guestName" required placeholder="VD: Nguyễn Văn A" />
+        </div>
+        <div class="form-row form-split">
+          <div>
+            <label for="attending">Tham dự?</label>
+            <select id="attending" name="attending" required>
+              <option value="yes">Có, mình sẽ đến</option>
+              <option value="no">Xin lỗi, mình bận</option>
+            </select>
+          </div>
+          <div>
+            <label for="guestCount">Số khách</label>
+            <input type="number" id="guestCount" name="guestCount" min="1" max="10" value="1" />
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="message">Lời nhắn gửi Khôi (tùy chọn)</label>
+          <textarea id="message" name="message" rows="3" placeholder="Chúc mừng..."></textarea>
+        </div>
+        <button type="submit" class="btn" id="rsvp-submit">Gửi lời hồi âm</button>
+        <p id="rsvp-status" class="rsvp-status" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="cn">後 會 有 期</p>
+    <p>Đoàn Minh Khôi · Lễ Tốt Nghiệp · 09/08/2026</p>
+  </footer>
+
+  <!-- TRANSMITTING MODAL -->
+  <div id="transmit-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-live="assertive">
+    <div class="backdrop"></div>
+    <div class="box">
+      <div class="cn">傳 訊 中</div>
+      <div class="tx-bar" aria-hidden="true"><span></span></div>
+      <p>Đang gửi lời hồi âm của bạn…<br />lần kết nối đầu có thể mất tới một phút.</p>
+    </div>
+  </div>
+
+  <!-- THANK-YOU MODAL -->
+  <div id="thankyou-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="ty-cn">
+    <div class="backdrop"></div>
+    <div class="box">
+      <div class="seal" aria-hidden="true">謝</div>
+      <div class="cn" id="ty-cn">Đa Tạ</div>
+      <p>Đã nhận được lời hồi âm của bạn.<br />Hẹn gặp ngày <strong>09/08/2026</strong> nhé!</p>
+      <button type="button" id="ty-close" class="btn">Tiếp tục</button>
+    </div>
+  </div>
+
+  <!-- MUSIC -->
+  <button id="music-toggle" class="music-toggle" type="button" aria-label="Bật/tắt nhạc nền" title="Nhạc nền: 知我 — Lưu Vũ Hân"></button>
+  <div id="yt-holder" aria-hidden="true"></div>
+
+  <!-- TRANSMIGRATION WARP -->
+  <canvas id="warp3d" aria-hidden="true"></canvas>
+  <div id="warp" class="warp" aria-hidden="true"><span class="warp-core"></span></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/xianxia-warp3d.js"></script>
+  <script src="js/xianxia.js"></script>
+</body>
+</html>
