@@ -73,7 +73,7 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
 #preloader {
   position: fixed;
   inset: 0;
-  z-index: 999;
+  z-index: 9999;
   background: var(--bg);
   display: flex;
   align-items: center;
@@ -133,34 +133,139 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
   50% { box-shadow: 0 0 42px rgba(0, 246, 255, 0.5); }
 }
 
-.boot-box {
-  width: min(90vw, 520px);
-  transition: opacity 0.4s ease;
+/* ---------------- Hacker terminal boot sequence ---------------- */
+/* The ONLY place we lock page scrolling — during the fullscreen overlay. */
+body.hacking { overflow: hidden; }
+
+.hacker-terminal {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
 }
-.boot-box.pending { opacity: 0; pointer-events: none; }
-.boot-log {
-  font-family: var(--font-mono);
-  color: var(--neon-cyan);
-  font-size: 0.85rem;
-  min-height: 160px;
-  white-space: pre-wrap;
-  text-shadow: 0 0 6px rgba(0, 246, 255, 0.6);
+.hacker-terminal.pending { opacity: 0; pointer-events: none; }
+.ht-scan {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+  background: repeating-linear-gradient(to bottom, rgba(0, 246, 255, 0.05) 0 1px, transparent 1px 3px);
+  mix-blend-mode: screen;
 }
-.boot-bar {
-  margin-top: 1rem;
-  height: 4px;
-  background: var(--border);
-  border-radius: 2px;
+.ht-window {
+  width: min(94vw, 640px);
+  background: rgba(4, 10, 18, 0.88);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 10px;
+  box-shadow: 0 0 44px rgba(0, 246, 255, 0.18), inset 0 0 30px rgba(0, 246, 255, 0.05);
   overflow: hidden;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
 }
-.boot-bar span {
-  display: block;
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan));
-  box-shadow: 0 0 10px var(--neon-cyan);
-  transition: width 0.2s linear;
+.ht-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0.55rem 0.85rem;
+  background: rgba(0, 246, 255, 0.06);
+  border-bottom: 1px solid var(--border);
 }
+.ht-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.ht-dot.r { background: #ff5f56; }
+.ht-dot.y { background: #ffbd2e; }
+.ht-dot.g { background: #27c93f; }
+.ht-titlebar { margin-left: 6px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); letter-spacing: 1px; }
+.ht-log {
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 2.7vw, 0.95rem);
+  line-height: 1.9;
+  padding: 1.1rem 1.2rem 1.4rem;
+  min-height: 190px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.ht-log .ht-cmd { color: #eaffff; text-shadow: 0 0 6px rgba(0, 246, 255, 0.5); }
+.ht-log .ht-ok  { color: #39ff14; text-shadow: 0 0 6px rgba(57, 255, 20, 0.65); }
+.ht-log .ht-dim { color: var(--neon-cyan); opacity: 0.82; text-shadow: 0 0 6px rgba(0, 246, 255, 0.5); }
+.ht-cur { color: #39ff14; text-shadow: 0 0 8px #39ff14; animation: htBlink 0.9s steps(1) infinite; }
+@keyframes htBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+/* Phase 3: glitch, then compress the whole window into a glowing line. */
+.hacker-terminal.compress .ht-window {
+  animation: htGlitch 0.24s steps(2) 1, htCompress 0.44s 0.24s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+@keyframes htGlitch {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px) skewX(3deg); }
+  50% { transform: translateX(5px) skewX(-2deg); }
+  75% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+@keyframes htCompress {
+  0% { transform: scaleX(1); opacity: 1; filter: brightness(1); }
+  65% { transform: scaleX(0.05) scaleY(0.9); opacity: 1; filter: brightness(2.3); }
+  100% { transform: scaleX(0.012) scaleY(0.4); opacity: 0; filter: brightness(2.8); }
+}
+
+/* Beat 1 end → Beat 2: the collapsed text becomes a glowing green "Data Node"
+   that streaks LEFT with a stretched motion-trail, unpacking the stream. */
+.data-node {
+  position: absolute; left: 50%; top: 50%; z-index: 4;
+  width: 24px; height: 8px; border-radius: 3px;
+  transform: translate(-50%, -50%) scale(0);
+  background: #39ff14;
+  box-shadow: 0 0 18px #39ff14, 0 0 42px rgba(57, 255, 20, 0.85);
+  opacity: 0; pointer-events: none; will-change: transform, opacity;
+}
+.data-node.go { animation: nodeBeat 0.92s cubic-bezier(0.5, 0, 0.2, 1) forwards; }
+@keyframes nodeBeat {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scaleX(5) scaleY(0.25); }
+  18%  { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  38%  { opacity: 1; transform: translate(-50%, -50%) translateX(0) scaleX(1); }
+  64%  { opacity: 1; transform: translate(-50%, -50%) translateX(-11vw) scaleX(2.8); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translateX(-36vw) scaleX(0.5); }
+}
+
+/* Beat 2: binary particles spray leftward from the node (the data stream). */
+.binary-stream { position: absolute; inset: 0; z-index: 4; pointer-events: none; overflow: hidden; }
+.binary-stream .bit {
+  position: absolute; left: 50%; top: 50%;
+  font-family: var(--font-mono); color: #39ff14;
+  text-shadow: 0 0 8px #39ff14; line-height: 1;
+  transform: translate(-50%, -50%); opacity: 0; will-change: transform, opacity;
+}
+.binary-stream.go .bit { animation: bitFly var(--dur, 0.7s) var(--delay, 0s) cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+@keyframes bitFly {
+  0%   { opacity: 0; transform: translate(-50%, -50%) translateX(0) translateY(0) scale(1.25); }
+  16%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) translateX(var(--tx, -30vw)) translateY(var(--ty, 0)) scale(0.55); }
+}
+
+/* Beat 3: an intense neon flash before the page is revealed. */
+.reveal-flash {
+  position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at 50% 50%, #ffffff, #d6fff0 30%, #39ff14 66%, rgba(0, 246, 255, 0) 100%);
+}
+.reveal-flash.on { animation: flashPop 0.42s ease-out forwards; }
+@keyframes flashPop { 0% { opacity: 0; } 16% { opacity: 0.97; } 100% { opacity: 0; } }
+
+/* Beat 3: the main page DOM elements cascade in — slide up + fade, as if
+   they were unpacked from the data stream. */
+body.booted .site-nav { animation: cascadeUp 0.55s 0.02s both cubic-bezier(0.22, 1, 0.36, 1); }
+body.booted .hero-inner > * { animation: cascadeUp 0.66s both cubic-bezier(0.22, 1, 0.36, 1); }
+body.booted .hero-inner > *:nth-child(1) { animation-delay: 0.06s; }
+body.booted .hero-inner > *:nth-child(2) { animation-delay: 0.13s; }
+body.booted .hero-inner > *:nth-child(3) { animation-delay: 0.20s; }
+body.booted .hero-inner > *:nth-child(4) { animation-delay: 0.27s; }
+body.booted .hero-inner > *:nth-child(5) { animation-delay: 0.34s; }
+body.booted .hero-inner > *:nth-child(6) { animation-delay: 0.41s; }
+body.booted .hero-inner > *:nth-child(7) { animation-delay: 0.48s; }
+body.booted .scroll-hint { animation: cascadeUp 0.6s 0.55s both cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes cascadeUp {
+  from { opacity: 0; transform: translateY(28px); filter: blur(3px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+/* NOTE: this boot sequence is intentional and plays even when the OS prefers
+   reduced motion, matching the rest of the site (whose reduced-motion kill
+   switches were deliberately removed so the experience always runs). */
 
 /* ---------------- Nav ---------------- */
 .site-nav {

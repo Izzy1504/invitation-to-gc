@@ -41,52 +41,104 @@
     return { init, play, pause };
   })();
 
-  /* ---------------- Preloader boot sequence ---------------- */
-  const bootLines = [
-    '> ESTABLISHING SECURE CONNECTION...',
-    '> AUTHENTICATING GUEST CREDENTIALS...',
-    '> LOADING INVITATION PROTOCOL v2026.08.09...',
-    '> DECRYPTING VENUE COORDINATES: SÀI GÒN UNIVERSITY...',
-    '> ACCESS GRANTED. WELCOME.',
+  /* ---------------- Hacker boot sequence (terminal → warp → reveal) ---------------- */
+  const HACK_LINES = [
+    { t: 'user@portfolio:~$ ./run_timeline.sh', c: 'cmd' },
+    { t: '> [2021]: SYSTEM_BOOT_START // Bắt đầu', c: 'ok' },
+    { t: '> [2022-2025]: PROCESSING_EDUCATION_MODULE // Học tập', c: 'ok' },
+    { t: '> [2026]: COMPILATION_SUCCESS // Tốt nghiệp', c: 'ok' },
+    { t: '> Packaging data...', c: 'dim' },
   ];
 
   function runBootSequence() {
-    const logEl = document.getElementById('boot-log');
-    const progressEl = document.getElementById('boot-progress');
     const preloader = document.getElementById('preloader');
-    if (!logEl || !preloader) return;
+    const term = document.getElementById('hacker-terminal');
+    const logEl = document.getElementById('ht-log');
+    const node = document.getElementById('data-node');
+    const stream = document.getElementById('binary-stream');
+    const flash = document.getElementById('reveal-flash');
+    if (!preloader || !term || !logEl) {
+      if (preloader) preloader.classList.add('hide');
+      document.body.classList.remove('hacking');
+      document.body.classList.add('booted');
+      startGuidedFlow();
+      return;
+    }
 
-    let lineIndex = 0;
-    let charIndex = 0;
-    let printed = '';
+    term.classList.remove('pending');
+    const CURSOR = '<span class="ht-cur">\u2588</span>';
+    let li = 0;
+    let done = ''; // committed HTML of finished lines
 
-    function typeNext() {
-      if (lineIndex >= bootLines.length) {
-        if (window.SFX) SFX.powerUp();
-        setTimeout(() => {
-          preloader.classList.add('hide');
-          startGuidedFlow();
-        }, 400);
-        return;
-      }
-      const line = bootLines[lineIndex];
-      if (charIndex <= line.length) {
-        logEl.textContent = printed + line.slice(0, charIndex) + '\n';
-        // Rapid keystroke ticks give the boot log a "coding" feel.
-        if (window.SFX && charIndex > 0 && charIndex % 2 === 0) SFX.type();
-        charIndex++;
-        const pct = Math.round(((lineIndex + charIndex / line.length) / bootLines.length) * 100);
-        if (progressEl) progressEl.style.width = Math.min(pct, 100) + '%';
-        setTimeout(typeNext, 14);
-      } else {
-        printed += line + '\n';
-        lineIndex++;
-        charIndex = 0;
-        if (window.SFX) SFX.boot();
-        setTimeout(typeNext, 120);
+    function typeLine() {
+      if (li >= HACK_LINES.length) { setTimeout(collapse, 520); return; }
+      const line = HACK_LINES[li];
+      const wrap = (s) => '<span class="ht-' + line.c + '">' + s + '</span>';
+      let ci = 0;
+      (function typeChar() {
+        if (ci <= line.t.length) {
+          logEl.innerHTML = done + wrap(line.t.slice(0, ci)) + CURSOR;
+          if (window.SFX && ci > 0 && ci % 2 === 0) SFX.type();
+          ci++;
+          // Chunky, irregular "hacker" cadence with occasional stalls.
+          const delay = 9 + Math.random() * 34 + (Math.random() < 0.06 ? 110 : 0);
+          setTimeout(typeChar, delay);
+        } else {
+          done += wrap(line.t) + '\n';
+          li++;
+          if (window.SFX) SFX.boot();
+          setTimeout(typeLine, 130 + Math.random() * 160);
+        }
+      })();
+    }
+
+    // Fill the binary-particle stream that sprays leftward from the node.
+    function buildBinary() {
+      if (!stream) return;
+      stream.innerHTML = '';
+      for (let i = 0; i < 26; i++) {
+        const b = document.createElement('span');
+        b.className = 'bit';
+        b.textContent = Math.random() < 0.5 ? '0' : '1';
+        b.style.setProperty('--tx', -(12 + Math.random() * 44) + 'vw');
+        b.style.setProperty('--ty', ((Math.random() - 0.5) * 28) + 'vh');
+        b.style.setProperty('--delay', (Math.random() * 0.22) + 's');
+        b.style.setProperty('--dur', (0.55 + Math.random() * 0.4) + 's');
+        b.style.fontSize = (11 + Math.random() * 10) + 'px';
+        stream.appendChild(b);
       }
     }
-    typeNext();
+
+    // Beat 1 — Collapse: the terminal text squishes horizontally into a node.
+    function collapse() {
+      term.classList.add('compress');
+      if (window.SFX && SFX.whoosh) SFX.whoosh();
+      setTimeout(travel, 420);
+    }
+
+    // Beat 2 — Travel: the Data Node streaks left, spraying binary particles.
+    function travel() {
+      if (node) node.classList.add('go');
+      buildBinary();
+      if (stream) stream.classList.add('go');
+      if (window.SFX && SFX.blip) SFX.blip();
+      setTimeout(unpack, 700);
+    }
+
+    // Beat 3 — Unpacking: intense flash, then the page cascades into view.
+    function unpack() {
+      if (flash) flash.classList.add('on');
+      if (window.SFX) SFX.powerUp();
+      document.body.classList.add('booted');
+      setTimeout(() => {
+        preloader.classList.add('hide');
+        document.body.classList.remove('hacking');
+        startGuidedFlow();
+        setTimeout(() => { if (flash) flash.classList.remove('on'); }, 500);
+      }, 120);
+    }
+
+    typeLine();
   }
 
   // Show the intro gate; the boot sequence (with sound) starts on tap so the
@@ -94,11 +146,10 @@
   function initBootGate() {
     const gate = document.getElementById('boot-gate');
     const startBtn = document.getElementById('boot-start');
-    const box = document.querySelector('.boot-box');
 
     function begin() {
       if (gate) gate.classList.add('hidden');
-      if (box) box.classList.remove('pending');
+      document.body.classList.add('hacking'); // lock scroll only during the overlay
       if (window.SFX) SFX.click();
       Music.play();
       runBootSequence();
@@ -301,10 +352,9 @@
     document.body.classList.remove('guide-locked');
   }
 
-  // Start held at the very top (Home) with everything locked.
+  // Native scrolling — no scroll-jacking. Just drop the guest at the top.
   function startGuidedFlow() {
     window.scrollTo(0, 0);
-    requestAnimationFrame(lockScroll);
   }
 
   function endGuide() {

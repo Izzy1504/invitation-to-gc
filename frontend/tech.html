@@ -12,19 +12,32 @@
 </head>
 <body>
 
-  <!-- PRELOADER / BOOT SEQUENCE -->
+  <!-- PRELOADER / HACKER BOOT SEQUENCE -->
   <div id="preloader">
+    <!-- Phase 1: the trigger -->
     <div id="boot-gate" class="boot-gate">
       <button id="boot-start" class="boot-start" type="button">
         <span class="bs-line">&gt; SYSTEM_READY</span>
-        <span class="bs-main">INITIALIZE</span>
-        <span class="bs-sub">&#9656; tap to establish connection</span>
+        <span class="bs-main">[ INITIALIZE ]</span>
+        <span class="bs-sub">&#9656; tap to run boot sequence</span>
       </button>
     </div>
-    <div class="boot-box pending">
-      <pre id="boot-log" class="boot-log"></pre>
-      <div class="boot-bar"><span id="boot-progress"></span></div>
+    <!-- Phase 2: the hacker terminal -->
+    <div id="hacker-terminal" class="hacker-terminal pending" aria-hidden="true">
+      <div class="ht-scan" aria-hidden="true"></div>
+      <div class="ht-window">
+        <div class="ht-bar">
+          <span class="ht-dot r"></span><span class="ht-dot y"></span><span class="ht-dot g"></span>
+          <span class="ht-titlebar">bash — run_timeline.sh</span>
+        </div>
+        <pre id="ht-log" class="ht-log"></pre>
+      </div>
     </div>
+    <!-- Beat 1→2: collapsed data node + leftward binary particle stream -->
+    <div id="data-node" class="data-node" aria-hidden="true"></div>
+    <div id="binary-stream" class="binary-stream" aria-hidden="true"></div>
+    <!-- Beat 3: reveal flash -->
+    <div id="reveal-flash" class="reveal-flash" aria-hidden="true"></div>
   </div>
 
   <!-- BACKGROUND CANVAS -->
