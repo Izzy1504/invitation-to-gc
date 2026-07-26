@@ -730,6 +730,17 @@ img { -webkit-user-drag: none; -webkit-touch-callout: none; }
 .map-note { text-align: center; color: var(--text-dim); max-width: 680px; margin: 0 auto 0.6rem; }
 .map-note-sub { text-align: center; color: var(--text-dim); max-width: 720px; margin: 0 auto 1.6rem; font-size: 0.95rem; opacity: 0.9; }
 .map-note strong, .map-note-sub strong { color: var(--gold-bright); }
+.map-note-park {
+  display: inline-block;
+  border: 1px solid var(--gold);
+  background: rgba(201, 211, 218, 0.06);
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  margin: 0 auto 1.4rem;
+  color: var(--text);
+  box-shadow: 0 0 18px rgba(var(--glow), 0.14);
+}
+.map-note-park strong { color: var(--gold-bright); }
 .xmap-wrap { max-width: 920px; margin: 0 auto; padding: 1rem; overflow: hidden; }
 
 #campus-map { width: 100%; height: auto; display: block; }
