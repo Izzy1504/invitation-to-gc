@@ -21,7 +21,7 @@
   --line: rgba(206, 216, 224, 0.26);
   --glow: 210, 220, 228;    /* cool-white glow (r,g,b) */
   --font-hei: 'Playfair Display', 'Noto Serif', 'Noto Serif SC', serif;
-  --font-body: 'Cormorant Garamond', 'Noto Serif', 'Noto Serif SC', serif;
+  --font-body: 'Noto Serif', 'Noto Serif SC', serif;
   --font-cn: 'Ma Shan Zheng', 'Noto Serif', 'Noto Serif SC', serif;
   --font-cn-serif: 'Noto Serif', 'Noto Serif SC', serif;
 }
