@@ -131,6 +131,25 @@
 
   /* ---------------- Gentle guqin-like pluck (interaction feedback) ---------------- */
   let actx = null;
+  // Real wooden-door-open recording (Pixabay, DRAGON-STUDIO, free license).
+  let doorBuffer = null;
+  let doorLoad = null;
+  function loadDoorSound() {
+    if (doorLoad) return doorLoad;
+    doorLoad = (async () => {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        if (!actx) actx = new AC();
+        const res = await fetch('assets/sfx/open-door.mp3');
+        if (!res.ok) return null;
+        const arr = await res.arrayBuffer();
+        doorBuffer = await actx.decodeAudioData(arr);
+        return doorBuffer;
+      } catch (e) { return null; }
+    })();
+    return doorLoad;
+  }
   function pluck(freq) {
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -316,9 +335,21 @@
       if (!AC) return;
       if (!actx) actx = new AC();
       if (actx.state === 'suspended') actx.resume();
+
+      // Preferred: play the real wooden-door-open recording.
+      if (doorBuffer) {
+        const src = actx.createBufferSource();
+        src.buffer = doorBuffer;
+        const g = actx.createGain();
+        g.gain.value = 0.85;
+        src.connect(g).connect(actx.destination);
+        src.start(actx.currentTime);
+        return;
+      }
+
       const t = actx.currentTime;
 
-      // Subtle creak: a thin wavering tone through a resonant band-pass
+      // Fallback (file unavailable): subtle wavering band-pass creak
       // (the slow ~7Hz waver gives the classic old-door "giii…" character).
       const osc = actx.createOscillator();
       osc.type = 'sawtooth';
@@ -370,6 +401,7 @@
     document.body.style.overflow = 'hidden';
     seq.classList.add('active');
     seq.setAttribute('aria-hidden', 'false');
+    loadDoorSound(); // preload the real door recording (ready before doors open)
     startSeqSnow(seq.querySelector('.xseq-snow'));
     const items = seq.querySelectorAll('.xtl-item');
     requestAnimationFrame(() => seq.classList.add('line-in'));
