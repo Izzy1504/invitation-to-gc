@@ -20,10 +20,10 @@
   --text-dim: #93a1a9;
   --line: rgba(206, 216, 224, 0.26);
   --glow: 210, 220, 228;    /* cool-white glow (r,g,b) */
-  --font-hei: 'Cinzel', serif;
-  --font-body: 'Cormorant Garamond', 'Noto Serif SC', serif;
-  --font-cn: 'Ma Shan Zheng', 'Noto Serif SC', serif;
-  --font-cn-serif: 'Noto Serif SC', serif;
+  --font-hei: 'Playfair Display', 'Noto Serif', 'Noto Serif SC', serif;
+  --font-body: 'Cormorant Garamond', 'Noto Serif', 'Noto Serif SC', serif;
+  --font-cn: 'Ma Shan Zheng', 'Noto Serif', 'Noto Serif SC', serif;
+  --font-cn-serif: 'Noto Serif', 'Noto Serif SC', serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -369,7 +369,7 @@ body {
 }
 .hero-sub { color: var(--text-dim); font-size: 1.15rem; font-style: italic; }
 .hero-name {
-  font-family: var(--font-cn);
+  font-family: 'Playfair Display', 'Noto Serif', serif;
   font-size: clamp(3rem, 9vw, 6rem);
   color: var(--gold-bright);
   margin: 0.5rem 0;
