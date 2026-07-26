@@ -611,6 +611,16 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
 }
 #campus-map { width: 100%; height: auto; display: block; }
 
+/* Hidden YouTube background-music player. */
+#yt-holder {
+  position: fixed;
+  width: 1px; height: 1px;
+  left: -10px; bottom: -10px;
+  opacity: 0.01;
+  pointer-events: none;
+  z-index: -10;
+}
+
 /* ---------------- Map lightbox (tap to enlarge) ---------------- */
 .map-zoomable { cursor: zoom-in; position: relative; }
 .map-zoomable::after {

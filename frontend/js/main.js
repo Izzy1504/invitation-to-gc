@@ -5,6 +5,42 @@
   // when this page is hosted on GitHub Pages.
   const API_BASE = window.API_BASE || '/api';
 
+  /* ---------------- Background music (YouTube: GG EZ — M.Sasuke) ---------------- */
+  const Music = (function () {
+    const VIDEO_ID = '6lN51mwvuA8';
+    let player = null, ready = false, wantPlay = false;
+    function isMuted() { return !!(window.SFX && SFX.isMuted && SFX.isMuted()); }
+    function doPlay() {
+      if (ready && player) { player.unMute(); player.setVolume(62); player.playVideo(); }
+    }
+    function load() {
+      window.onYouTubeIframeAPIReady = function () {
+        player = new YT.Player('yt-holder', {
+          videoId: VIDEO_ID,
+          playerVars: {
+            autoplay: 0, controls: 0, loop: 1, playlist: VIDEO_ID,
+            playsinline: 1, modestbranding: 1, rel: 0,
+          },
+          events: {
+            onReady: () => { ready = true; if (wantPlay && !isMuted()) doPlay(); },
+            // If the video can't be embedded, fall back to the synth ambience.
+            onError: () => { if (window.SFX) SFX.startAmbient(); },
+          },
+        });
+      };
+      const s = document.createElement('script');
+      s.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(s);
+    }
+    function play() { wantPlay = true; if (!isMuted()) doPlay(); }
+    function pause() { if (ready && player) player.pauseVideo(); }
+    function init() {
+      load();
+      if (window.SFX && SFX.onMute) SFX.onMute((m) => { if (m) pause(); else play(); });
+    }
+    return { init, play, pause };
+  })();
+
   /* ---------------- Preloader boot sequence ---------------- */
   const bootLines = [
     '> ESTABLISHING SECURE CONNECTION...',
@@ -63,7 +99,8 @@
     function begin() {
       if (gate) gate.classList.add('hidden');
       if (box) box.classList.remove('pending');
-      if (window.SFX) { SFX.click(); SFX.startAmbient(); }
+      if (window.SFX) SFX.click();
+      Music.play();
       runBootSequence();
     }
 
@@ -460,5 +497,6 @@
     initMapLightbox();
     initRsvpForm();
     initSoundEffects();
+    Music.init();
   });
 })();

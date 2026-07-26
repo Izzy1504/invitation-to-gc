@@ -12,6 +12,7 @@
   let ctx = null;
   let master = null;
   let muted = localStorage.getItem(STORAGE_KEY) === '1';
+  const muteListeners = [];
 
   function ensureCtx() {
     if (ctx) return ctx;
@@ -163,6 +164,7 @@
     startAmbient() { startAmbient(); },
     stopAmbient() { stopAmbient(true); },
     ambientPlaying() { return ambientWanted; },
+    onMute(fn) { if (typeof fn === 'function') muteListeners.push(fn); },
     isMuted() { return muted; },
     setMuted(v) {
       muted = !!v;
@@ -170,6 +172,7 @@
       updateToggle();
       if (muted) stopAmbient(false);
       else if (ambientWanted) startAmbient();
+      for (const fn of muteListeners) { try { fn(muted); } catch (e) { /* ignore */ } }
     },
     toggle() {
       const willUnmute = muted;
