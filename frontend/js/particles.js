@@ -6,8 +6,6 @@
   let w, h, nodes;
   // Lighter network on phones / low-power devices to save battery and jank.
   const smallScreen = Math.min(window.innerWidth, window.innerHeight) < 768;
-  const reduceMotion = window.matchMedia &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const NODE_COUNT = smallScreen ? 38 : 70;
   const MAX_DIST = smallScreen ? 110 : 140;
   // Render at device pixel density (capped at 2) so lines stay crisp on
@@ -76,17 +74,10 @@
     requestAnimationFrame(step);
   }
 
-  window.addEventListener('resize', () => {
-    resize();
-    if (reduceMotion) render(); // keep the static frame filling the screen
-  });
+  window.addEventListener('resize', resize);
 
   resize();
   initNodes();
-  if (reduceMotion) {
-    render(); // one static frame, no animation loop
-  } else {
-    lastT = performance.now();
-    requestAnimationFrame(step);
-  }
+  lastT = performance.now();
+  requestAnimationFrame(step);
 })();

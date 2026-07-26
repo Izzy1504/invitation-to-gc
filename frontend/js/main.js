@@ -394,6 +394,51 @@
     observer.observe(wrap);
   }
 
+  /* ---------------- Map lightbox (tap to enlarge) ---------------- */
+  function initMapLightbox() {
+    const wrap = document.querySelector('.map-wrap');
+    const map = document.getElementById('campus-map');
+    if (!wrap || !map) return;
+    wrap.classList.add('map-zoomable');
+    wrap.setAttribute('role', 'button');
+    wrap.setAttribute('tabindex', '0');
+    wrap.setAttribute('aria-label', 'Phóng to bản đồ khuôn viên');
+    let box = null;
+    function onKey(e) { if (e.key === 'Escape') closeBox(); }
+    function openBox() {
+      if (box) return;
+      box = document.createElement('div');
+      box.className = 'map-lightbox';
+      box.innerHTML =
+        '<button type="button" class="map-lightbox-close" aria-label="Đóng">\u2715</button>' +
+        '<div class="map-lightbox-inner"></div>' +
+        '<div class="map-lightbox-hint">Kéo để xem · chạm nền hoặc \u2715 để đóng</div>';
+      box.querySelector('.map-lightbox-inner').appendChild(map.cloneNode(true));
+      document.body.appendChild(box);
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => box.classList.add('open'));
+      box.addEventListener('click', (e) => {
+        if (e.target === box ||
+            e.target.classList.contains('map-lightbox-inner') ||
+            e.target.closest('.map-lightbox-close')) closeBox();
+      });
+      document.addEventListener('keydown', onKey);
+      if (window.SFX) SFX.click();
+    }
+    function closeBox() {
+      if (!box) return;
+      box.classList.remove('open');
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+      const b = box; box = null;
+      setTimeout(() => b.remove(), 320);
+    }
+    wrap.addEventListener('click', openBox);
+    wrap.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openBox(); }
+    });
+  }
+
   /* ---------------- Interactive sound effects ---------------- */
   function initSoundEffects() {
     if (!window.SFX) return;
@@ -411,6 +456,7 @@
     initReveal();
     initMissionLoaders();
     initMapAnimation();
+    initMapLightbox();
     initRsvpForm();
     initSoundEffects();
   });

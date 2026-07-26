@@ -704,6 +704,55 @@ body.warping .couplet { opacity: 0; filter: blur(4px); }
 .xmap-wrap { max-width: 920px; margin: 0 auto; padding: 1rem; overflow: hidden; }
 
 #campus-map { width: 100%; height: auto; display: block; }
+
+/* ---------------- Map lightbox (tap to enlarge) ---------------- */
+.map-zoomable { cursor: zoom-in; position: relative; }
+.map-zoomable::after {
+  content: '⤢  Chạm để phóng to';
+  position: absolute;
+  right: 1.2rem; bottom: 1.2rem;
+  font-family: var(--font-hei);
+  font-size: 0.62rem; letter-spacing: 1px;
+  color: var(--gold-bright);
+  background: rgba(10, 16, 20, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.3rem 0.6rem;
+  pointer-events: none;
+}
+.map-lightbox {
+  position: fixed; inset: 0; z-index: 3000;
+  background: rgba(4, 6, 10, 0.95);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.map-lightbox.open { opacity: 1; visibility: visible; }
+.map-lightbox-inner {
+  position: absolute; inset: 0;
+  overflow: auto;
+  padding: 3.6rem 1rem 3rem;
+}
+.map-lightbox-inner svg {
+  width: min(1200px, 240vw); height: auto; display: block; margin: 0 auto;
+}
+.map-lightbox-close {
+  position: absolute; z-index: 2;
+  top: max(0.8rem, env(safe-area-inset-top)); right: 0.9rem;
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.1rem; cursor: pointer;
+  background: rgba(16, 22, 26, 0.9);
+  color: var(--gold-bright);
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 16px rgba(210, 220, 228, 0.28);
+}
+.map-lightbox-hint {
+  position: absolute; left: 0; right: 0;
+  bottom: max(0.8rem, env(safe-area-inset-bottom));
+  text-align: center;
+  font-family: var(--font-hei); font-size: 0.7rem; letter-spacing: 1px;
+  color: var(--text-dim); pointer-events: none;
+}
 #campus-map .bld { fill: rgba(18, 24, 29, 0.85); stroke: #566169; stroke-width: 1.2; }
 #campus-map .bld-highlight { fill: rgba(32, 40, 46, 0.92); stroke: #aeb9c0; stroke-width: 1.4; }
 #campus-map .bld-court { fill: rgba(22, 30, 34, 0.85); stroke: #566169; stroke-width: 1.2; stroke-dasharray: 4 3; }

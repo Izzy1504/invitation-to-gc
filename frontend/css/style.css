@@ -611,6 +611,63 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
 }
 #campus-map { width: 100%; height: auto; display: block; }
 
+/* ---------------- Map lightbox (tap to enlarge) ---------------- */
+.map-zoomable { cursor: zoom-in; position: relative; }
+.map-zoomable::after {
+  content: '⤢  Chạm để phóng to';
+  position: absolute;
+  right: 1.1rem; bottom: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem; letter-spacing: 1px;
+  color: var(--neon-cyan);
+  background: rgba(4, 6, 13, 0.72);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  pointer-events: none;
+}
+.map-lightbox {
+  position: fixed; inset: 0; z-index: 3000;
+  background: rgba(2, 4, 9, 0.94);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.map-lightbox.open { opacity: 1; visibility: visible; }
+.map-lightbox-inner {
+  position: absolute; inset: 0;
+  overflow: auto;
+  padding: 3.6rem 1rem 3rem;
+}
+.map-lightbox-inner svg {
+  width: min(1200px, 240vw);
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+/* Force the route lines visible in the enlarged copy (they normally draw only
+   when the inline map scrolls into view). */
+.map-lightbox #route-path,
+.map-lightbox #route-moto,
+.map-lightbox #route-park { stroke-dashoffset: 0 !important; }
+.map-lightbox-close {
+  position: absolute; z-index: 2;
+  top: max(0.8rem, env(safe-area-inset-top)); right: 0.9rem;
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 1.1rem; cursor: pointer;
+  background: rgba(10, 17, 32, 0.9);
+  color: var(--neon-cyan);
+  border: 1px solid var(--neon-cyan);
+  box-shadow: 0 0 16px rgba(0, 246, 255, 0.35);
+}
+.map-lightbox-hint {
+  position: absolute; left: 0; right: 0;
+  bottom: max(0.8rem, env(safe-area-inset-bottom));
+  text-align: center;
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 1px;
+  color: var(--text-dim); pointer-events: none;
+}
+
 .bld {
   fill: rgba(59, 130, 246, 0.08);
   stroke: #1b5478;
@@ -1068,17 +1125,9 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
 }
 
 /* Honour reduced-motion — calmer visuals and lighter battery use on phones. */
+/* This site is an experiential invitation — motion is intentional, so effects
+   keep running even when the OS prefers reduced motion. Reveal content still
+   shows immediately as a safety net. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-  .reveal { opacity: 1 !important; transform: none !important; clip-path: none !important; }
-  .glitch::before,
-  .glitch::after { display: none; }
-  .scanline-overlay { display: none; }
+  .reveal { opacity: 1; transform: none; clip-path: none; }
 }
