@@ -89,7 +89,16 @@
       requestAnimationFrame(loop);
     }
 
-    window.addEventListener('resize', resize);
+    // On mobile, scrolling shows/hides the address bar, which changes
+    // window.innerHeight and would fire resize() constantly (reallocating the
+    // canvas → jank). Only re-init when the WIDTH actually changes (rotation).
+    let lastW = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      resize();
+    });
+    window.addEventListener('orientationchange', resize);
     resize();
     last = performance.now();
     requestAnimationFrame(loop);

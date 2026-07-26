@@ -74,7 +74,16 @@
     requestAnimationFrame(step);
   }
 
-  window.addEventListener('resize', resize);
+  // On mobile, scrolling toggles the address bar → innerHeight changes and would
+  // fire resize() on every scroll step (reallocating the canvas → jank). Only
+  // re-init on an actual width change (rotation / real resize).
+  let lastW = window.innerWidth;
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
+    resize();
+  });
+  window.addEventListener('orientationchange', resize);
 
   resize();
   initNodes();

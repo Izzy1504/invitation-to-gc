@@ -868,23 +868,62 @@ body {
 
 /* ---------------- Responsive ---------------- */
 @media (max-width: 760px) {
+  /* background-attachment:fixed repaints the whole gradient on every scroll
+     step on mobile (and iOS Safari ignores it) → jank. The fixed snow canvas
+     and moon already supply the parallax, so let the gradient scroll. */
+  body { background-attachment: scroll; }
   .couplet { display: none; }
   .moon { width: 130px; height: 130px; top: 4vh; right: 8vw; }
   .event-grid { grid-template-columns: 1fr; }
   .bless-grid { grid-template-columns: 1fr; }
   .section { padding: 5rem 7vw 3rem; }
-  .btn { min-height: 46px; }
+  .btn { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; }
   .rsvp-form input,
   .rsvp-form select,
   .rsvp-form textarea { font-size: 16px; min-height: 46px; } /* stop iOS zoom */
   .rsvp-form { padding: 1.6rem 1.3rem; }
+  /* Keep the watermark calligraphy faint and small so body text stays legible. */
+  .kchar b { font-size: clamp(4.5rem, 22vw, 9rem); }
+  .sect-cn { font-size: 2rem; }
+  .hero-seal { width: 72px; height: 72px; font-size: 2.2rem; }
+  /* Intro sequence: keep the study timeline comfortably inside the viewport. */
+  .xseq-stage { padding: 1.2rem; }
+  .xseq-title { margin-bottom: 1.3rem; }
+  .xtimeline { width: min(320px, 84vw); }
+  .xtl-item { margin: 1.2rem 0; }
+  .xtl-item b { font-size: 1.3rem; }
+  .xtl-item.grad b { font-size: 1.7rem; }
+}
+
+@media (max-width: 480px) {
+  .section { padding: 4.6rem 6vw 2.6rem; }
+  .countdown { gap: 0.5rem; }
+  .cd-box { min-width: 0; flex: 1 1 20%; padding: 0.6rem 0.4rem; }
+  .cd-box b { font-size: 1.4rem; }
+  .cd-box i { font-size: 0.55rem; letter-spacing: 1px; }
+  .rsvp-form .btn,
+  .box .btn { width: 100%; }
+  .map-legend { gap: 0.7rem 1rem; font-size: 0.75rem; }
 }
 
 @media (max-width: 380px) {
   .hero-name { font-size: 2.6rem; }
   .enter-seal { width: 112px; height: 112px; }
   .enter-seal span { font-size: 3.8rem; }
-  .cd-box { min-width: 64px; padding: 0.7rem 0.6rem; }
+  .cd-box { padding: 0.6rem 0.35rem; }
+  .xtl-item b { font-size: 1.15rem; }
+  .xtl-item i { font-size: 0.9rem; }
+}
+
+/* Landscape phones / short viewports — don't force a full-height hero/gate that
+   would push the button and content off-screen behind the browser chrome. */
+@media (max-height: 560px) and (orientation: landscape) {
+  .hero { min-height: 0; padding-top: 5rem; padding-bottom: 2.5rem; }
+  .couplet { display: none; }
+  .scroll-hint { display: none; }
+  .enter-inner { animation: none; }
+  .enter-seal { width: 92px; height: 92px; margin-bottom: 1rem; }
+  .enter-seal span { font-size: 3rem; }
 }
 
 /* This is an experiential invitation — motion is intentional, so the snow,
