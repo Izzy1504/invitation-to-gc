@@ -928,3 +928,45 @@ body {
 
 /* This is an experiential invitation — motion is intentional, so the snow,
    warp and glows keep running even when the OS prefers reduced motion. */
+
+/* ---------------- Floating "back to chooser" bubble ---------------- */
+body { transition: opacity 0.42s ease; }
+body.leaving { opacity: 0; }
+.back-portal {
+  position: fixed;
+  left: max(1rem, env(safe-area-inset-left));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 500;
+  display: inline-flex;
+  align-items: center;
+  max-width: 48px;
+  height: 48px;
+  padding: 0 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(16, 20, 24, 0.82);
+  border: 1px solid var(--gold);
+  color: var(--gold-bright);
+  font-family: var(--font-hei);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  box-shadow: 0 0 18px rgba(var(--glow), 0.24), inset 0 0 14px rgba(var(--glow), 0.06);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: max-width 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, background 0.25s ease, transform 0.15s ease;
+}
+.back-portal .bp-ico { width: 22px; height: 22px; flex: 0 0 auto; }
+.back-portal .bp-txt { margin-left: 8px; opacity: 0; transition: opacity 0.25s ease; }
+@media (hover: hover) {
+  .back-portal:hover { max-width: 250px; box-shadow: 0 0 28px rgba(var(--glow), 0.42); }
+  .back-portal:hover .bp-txt { opacity: 1; }
+}
+.back-portal:focus-visible { max-width: 250px; outline: none; box-shadow: 0 0 0 2px var(--gold); }
+.back-portal:focus-visible .bp-txt { opacity: 1; }
+.back-portal:active { transform: scale(0.93); }
+@media (hover: none) {
+  .back-portal { max-width: 250px; }
+  .back-portal .bp-txt { opacity: 1; }
+}

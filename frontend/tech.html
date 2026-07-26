@@ -46,6 +46,14 @@
     </ul>
   </nav>
 
+  <!-- BACK-TO-CHOOSER BUBBLE -->
+  <a href="index.html" class="back-portal" aria-label="Đổi giao diện — về trang chọn">
+    <svg class="bp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/>
+    </svg>
+    <span class="bp-txt">Đổi giao diện</span>
+  </a>
+
   <main>
     <!-- HERO -->
     <section id="hero" class="section hero">
@@ -489,5 +497,16 @@
   <script src="js/particles.js"></script>
   <div id="yt-holder" aria-hidden="true"></div>
   <script src="js/main.js"></script>
+  <script>
+    (function () {
+      var bp = document.querySelector('.back-portal');
+      if (!bp) return;
+      bp.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.body.classList.add('leaving');
+        setTimeout(function () { location.href = bp.getAttribute('href'); }, 420);
+      });
+    })();
+  </script>
 </body>
 </html>

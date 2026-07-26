@@ -1143,3 +1143,46 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; clip-path: none; }
 }
+
+/* ---------------- Floating "back to chooser" bubble ---------------- */
+body { transition: opacity 0.42s ease; }
+body.leaving { opacity: 0; }
+.back-portal {
+  position: fixed;
+  left: max(1rem, env(safe-area-inset-left));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 500;
+  display: inline-flex;
+  align-items: center;
+  max-width: 48px;
+  height: 48px;
+  padding: 0 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(6, 10, 20, 0.82);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 0 16px rgba(0, 246, 255, 0.28), inset 0 0 12px rgba(0, 246, 255, 0.08);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: max-width 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, background 0.25s ease, transform 0.15s ease;
+}
+.back-portal .bp-ico { width: 22px; height: 22px; flex: 0 0 auto; }
+.back-portal .bp-txt { margin-left: 8px; opacity: 0; transition: opacity 0.25s ease; }
+@media (hover: hover) {
+  .back-portal:hover { max-width: 240px; background: rgba(10, 16, 28, 0.92); box-shadow: 0 0 26px rgba(0, 246, 255, 0.55); }
+  .back-portal:hover .bp-txt { opacity: 1; }
+}
+.back-portal:focus-visible { max-width: 240px; outline: none; box-shadow: 0 0 0 2px var(--neon-cyan); }
+.back-portal:focus-visible .bp-txt { opacity: 1; }
+.back-portal:active { transform: scale(0.93); }
+@media (hover: none) {
+  .back-portal { max-width: 240px; }
+  .back-portal .bp-txt { opacity: 1; }
+}
