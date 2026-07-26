@@ -148,44 +148,66 @@ body {
 .kchar:nth-child(3n) b { animation-duration: 13s; }
 @keyframes kFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
 
-/* ---------------- Transmigration warp ---------------- */
-#warp3d {
-  position: fixed;
-  inset: 0;
-  z-index: 1100;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.45s ease;
+/* ---------------- Intro sequence: study timeline → snow → doors ---------------- */
+.xseq {
+  position: fixed; inset: 0; z-index: 1200;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
-#warp3d.on { opacity: 1; }
-main { transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.9s ease; }
-body.warping main { transform: scale(1.14); filter: blur(7px); }
-.couplet { transition: opacity 0.6s ease, filter 0.6s ease; }
-body.warping .couplet { opacity: 0; filter: blur(4px); }
-.warp {
-  position: fixed;
-  inset: 0;
-  z-index: 1100;
-  pointer-events: none;
-  display: grid;
-  place-items: center;
-  opacity: 0;
+.xseq.active { opacity: 1; visibility: visible; }
+
+.xseq-door {
+  position: absolute; top: 0; bottom: 0; width: 50.5%;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.55), transparent 26%, transparent 74%, rgba(0,0,0,0.55)),
+    linear-gradient(160deg, #0c1218, #060a0e);
+  transition: transform 1.7s cubic-bezier(0.6, 0, 0.25, 1);
+  will-change: transform;
 }
-.warp.active { opacity: 1; }
-.warp-core {
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffffff 0%, rgba(232, 242, 250, 0.95) 28%, rgba(200, 220, 240, 0) 70%);
-  filter: blur(2px);
-  transform: scale(0);
+.xseq-door.left { left: 0; border-right: 1px solid var(--gold); box-shadow: inset -34px 0 70px rgba(0,0,0,0.7); }
+.xseq-door.right { right: 0; border-left: 1px solid var(--gold); box-shadow: inset 34px 0 70px rgba(0,0,0,0.7); }
+.xseq.open-doors .xseq-door.left { transform: translateX(-101%); }
+.xseq.open-doors .xseq-door.right { transform: translateX(101%); }
+
+.xseq-snow { position: absolute; inset: 0; z-index: 2; opacity: 0.92; pointer-events: none; transition: opacity 0.6s ease; }
+.xseq.open-doors .xseq-snow { opacity: 0; }
+
+.xseq-stage {
+  position: absolute; inset: 0; z-index: 3;
+  display: grid; place-items: center; padding: 1.5rem;
+  transition: opacity 0.9s ease;
 }
-.warp.active .warp-core { animation: warpBurst 1.5s cubic-bezier(0.5, 0, 0.2, 1) forwards; }
-@keyframes warpBurst {
-  0% { transform: scale(0); opacity: 0; }
-  25% { opacity: 1; }
-  55% { transform: scale(46); opacity: 1; }
-  100% { transform: scale(115); opacity: 0; }
+.xseq.snowing .xseq-stage { opacity: 0; }
+.xseq-title {
+  text-align: center; margin-bottom: 1.8rem;
+  font-family: var(--font-cn); color: var(--gold-bright);
+  font-size: clamp(1.3rem, 5vw, 2rem); letter-spacing: 6px;
+  text-shadow: 0 0 22px rgba(216, 183, 116, 0.45);
 }
+.xtimeline { position: relative; width: min(360px, 80vw); margin: 0 auto; padding-left: 2rem; }
+.xtl-line {
+  position: absolute; left: 7px; top: 6px; width: 2px; height: 0;
+  background: linear-gradient(var(--gold), rgba(216, 183, 116, 0.12));
+  transition: height 2.3s ease;
+}
+.xseq.line-in .xtl-line { height: calc(100% - 12px); }
+.xtl-item {
+  position: relative; margin: 1.5rem 0;
+  opacity: 0; transform: translateX(-16px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.xtl-item.show { opacity: 1; transform: none; }
+.xtl-dot {
+  position: absolute; left: -1.72rem; top: 0.5rem;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--gold); box-shadow: 0 0 14px var(--gold);
+}
+.xtl-item b { display: block; font-family: var(--font-hei); font-size: 1.5rem; letter-spacing: 2px; color: var(--gold-bright); }
+.xtl-item i { font-style: normal; font-family: var(--font-cn-serif); color: var(--text-dim); font-size: 1rem; }
+.xtl-item.grad b { font-size: 1.95rem; text-shadow: 0 0 22px rgba(216, 183, 116, 0.6); }
+.xtl-item.grad i { color: var(--gold); }
+.xtl-item.grad .xtl-dot { width: 15px; height: 15px; box-shadow: 0 0 20px var(--gold-bright); }
 
 /* ---------------- Enter gate ---------------- */
 #enter-gate {

@@ -273,32 +273,131 @@
   })();
 
   /* ---------------- Enter gate ---------------- */
+  /* ---------------- Intro sequence: study timeline → snow → doors ---------------- */
+  let seqSnowRAF = null;
+  function startSeqSnow(canvas) {
+    if (!canvas) return;
+    const c = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const small = Math.min(window.innerWidth, window.innerHeight) < 720;
+    const N = small ? 70 : 130;
+    const flakes = Array.from({ length: N }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: 0.8 + Math.random() * 2.8,
+      s: 0.5 + Math.random() * 1.5,
+      d: Math.random() * Math.PI * 2,
+    }));
+    function step(t) {
+      c.clearRect(0, 0, canvas.width, canvas.height);
+      c.fillStyle = '#f2f6fa';
+      for (const f of flakes) {
+        f.y += f.s;
+        f.x += Math.sin(t * 0.001 + f.d) * 0.6;
+        if (f.y > canvas.height + 4) { f.y = -4; f.x = Math.random() * canvas.width; }
+        c.globalAlpha = 0.85;
+        c.beginPath();
+        c.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        c.fill();
+      }
+      c.globalAlpha = 1;
+      seqSnowRAF = requestAnimationFrame(step);
+    }
+    seqSnowRAF = requestAnimationFrame(step);
+  }
+  function stopSeqSnow() {
+    if (seqSnowRAF) { cancelAnimationFrame(seqSnowRAF); seqSnowRAF = null; }
+  }
+
+  function doorSound() {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!actx) actx = new AC();
+      if (actx.state === 'suspended') actx.resume();
+      const t = actx.currentTime;
+
+      // Subtle creak: a thin wavering tone through a resonant band-pass
+      // (the slow ~7Hz waver gives the classic old-door "giii…" character).
+      const osc = actx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, t);
+      osc.frequency.linearRampToValueAtTime(315, t + 1.0);
+      osc.frequency.linearRampToValueAtTime(235, t + 1.9);
+      const wob = actx.createOscillator();
+      wob.type = 'sine';
+      wob.frequency.value = 7;
+      const wobAmt = actx.createGain();
+      wobAmt.gain.value = 16;
+      wob.connect(wobAmt).connect(osc.frequency);
+      const bp = actx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 620;
+      bp.Q.value = 9;
+      const g = actx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.045, t + 0.25); // quiet
+      g.gain.setValueAtTime(0.045, t + 1.4);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 2.1);
+      osc.connect(bp).connect(g).connect(actx.destination);
+      osc.start(t); osc.stop(t + 2.2);
+      wob.start(t); wob.stop(t + 2.2);
+
+      // Soft low settle — the door coming to rest.
+      const dur = 0.28;
+      const frames = Math.floor(actx.sampleRate * dur);
+      const buf = actx.createBuffer(1, frames, actx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < frames; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / frames);
+      const th = actx.createBufferSource();
+      th.buffer = buf;
+      const lp = actx.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 200;
+      const tg = actx.createGain();
+      const tt = t + 1.95;
+      tg.gain.setValueAtTime(0.05, tt);
+      tg.gain.exponentialRampToValueAtTime(0.0001, tt + 0.28);
+      th.connect(lp).connect(tg).connect(actx.destination);
+      th.start(tt); th.stop(tt + dur);
+    } catch (e) { /* ignore */ }
+  }
+
+  function runIntroSequence(onArrive) {
+    const seq = document.getElementById('xseq');
+    if (!seq) { if (onArrive) onArrive(); return; }
+    document.body.style.overflow = 'hidden';
+    seq.classList.add('active');
+    seq.setAttribute('aria-hidden', 'false');
+    startSeqSnow(seq.querySelector('.xseq-snow'));
+    const items = seq.querySelectorAll('.xtl-item');
+    requestAnimationFrame(() => seq.classList.add('line-in'));
+    setTimeout(() => { if (items[0]) items[0].classList.add('show'); pluck(392); }, 1000);
+    setTimeout(() => { if (items[1]) items[1].classList.add('show'); pluck(440); }, 2400);
+    setTimeout(() => { if (items[2]) items[2].classList.add('show'); pluck(523); }, 3800);
+    setTimeout(() => { seq.classList.add('snowing'); }, 5000);
+    setTimeout(() => {
+      seq.classList.add('open-doors');
+      doorSound();
+      if (onArrive) onArrive();
+    }, 6200);
+    setTimeout(() => {
+      seq.classList.remove('active');
+      seq.setAttribute('aria-hidden', 'true');
+      stopSeqSnow();
+      document.body.style.overflow = '';
+    }, 8000);
+  }
+
   function initGate() {
     const gate = document.getElementById('enter-gate');
     const btn = document.getElementById('enter-btn');
     if (!gate) return;
     function enter() {
-      playTransmigration();
       gate.classList.add('gone');
-      document.body.classList.add('warping');
-      const reveal = () => {
-        document.body.classList.remove('warping');
-        Music.start();
-      };
-      if (window.Warp3D) {
-        // WebGL vortex → time tunnel → white-out; page revealed on the flash.
-        window.Warp3D.play(reveal);
-        setTimeout(() => { gate.style.display = 'none'; }, 500);
-      } else {
-        // Lightweight CSS fallback.
-        const warp = document.getElementById('warp');
-        if (warp) warp.classList.add('active');
-        setTimeout(reveal, 850);
-        setTimeout(() => {
-          if (warp) warp.classList.remove('active');
-          gate.style.display = 'none';
-        }, 1550);
-      }
+      setTimeout(() => { gate.style.display = 'none'; }, 900);
+      runIntroSequence(() => { Music.start(); });
     }
     if (btn) {
       btn.addEventListener('click', enter, { once: true });

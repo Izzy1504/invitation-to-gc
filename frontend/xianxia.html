@@ -485,12 +485,25 @@
   <button id="music-toggle" class="music-toggle" type="button" aria-label="Bật/tắt nhạc nền" title="Nhạc nền: 知我 — Lưu Vũ Hân"></button>
   <div id="yt-holder" aria-hidden="true"></div>
 
-  <!-- TRANSMIGRATION WARP -->
-  <canvas id="warp3d" aria-hidden="true"></canvas>
-  <div id="warp" class="warp" aria-hidden="true"><span class="warp-core"></span></div>
+  <!-- INTRO SEQUENCE: study timeline → snow → doors opening -->
+  <div id="xseq" class="xseq" aria-hidden="true">
+    <div class="xseq-door left"></div>
+    <div class="xseq-door right"></div>
+    <canvas class="xseq-snow"></canvas>
+    <div class="xseq-stage">
+      <div>
+        <p class="xseq-title">求 學 之 路</p>
+        <div class="xtimeline">
+          <div class="xtl-line" aria-hidden="true"></div>
+          <div class="xtl-item"><span class="xtl-dot"></span><b>2021</b><i>Nhập học · 入學</i></div>
+          <div class="xtl-item"><span class="xtl-dot"></span><b>2022 – 2025</b><i>Miệt mài đèn sách · 寒窗</i></div>
+          <div class="xtl-item grad"><span class="xtl-dot"></span><b>2026</b><i>Tốt nghiệp · 金榜題名</i></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="js/config.js"></script>
-  <script src="js/xianxia-warp3d.js"></script>
   <script src="js/xianxia.js"></script>
 </body>
 </html>
