@@ -35,6 +35,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Content protection: non-interactive text isn't selectable; form fields are. */
+body { -webkit-user-select: none; -moz-user-select: none; user-select: none; }
+input, textarea, select, [contenteditable="true"] { -webkit-user-select: text; user-select: text; }
+img { -webkit-user-drag: none; -webkit-touch-callout: none; }
+
 /* While the RSVP gate is active JS clamps how far down the page can scroll.
    We still allow vertical panning so the whole form stays reachable on touch. */
 body.guide-locked {
