@@ -649,6 +649,8 @@ body.warping .couplet { opacity: 0; filter: blur(4px); }
   font-family: var(--font-cn-serif);
 }
 .site-footer .cn { font-family: var(--font-cn); color: var(--gold); font-size: 1.3rem; }
+.music-credit { margin-top: 0.6rem; font-size: 0.82rem; opacity: 0.85; }
+.music-credit a { color: var(--gold); text-decoration: underline; }
 
 /* ---------------- Swipe hint toast (after RSVP) ---------------- */
 .hint-toast {

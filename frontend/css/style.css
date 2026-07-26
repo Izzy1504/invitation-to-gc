@@ -1012,6 +1012,8 @@ main, .site-nav, .site-footer { position: relative; z-index: 2; }
   border-top: 1px solid var(--border);
 }
 .footer-sub { margin-top: 0.3rem; opacity: 0.7; }
+.music-credit { margin-top: 0.5rem; font-size: 0.72rem; opacity: 0.8; }
+.music-credit a { color: var(--neon-cyan); text-decoration: underline; }
 
 /* ---------------- Responsive ---------------- */
 
