@@ -71,6 +71,70 @@
     src.stop(t0 + dur);
   }
 
+  /* ---- Ambient synthwave background loop (procedural "music") ---- */
+  let ambientWanted = false;
+  let pad = null;       // sustained chord nodes
+  let arpTimer = null;
+  let arpStep = 0;
+  const ARP = [329.63, 392.0, 440.0, 523.25, 440.0, 392.0]; // A-minor flavour
+
+  function startPad() {
+    const c = ensureCtx();
+    if (!c || pad) return;
+    const g = c.createGain();
+    g.gain.value = 0.0001;
+    const lp = c.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 620;
+    lp.Q.value = 6;
+    const freqs = [110, 110 * 1.004, 164.81, 220]; // A2 (+detune), E3, A3
+    const oscs = freqs.map((f) => {
+      const o = c.createOscillator();
+      o.type = 'sawtooth';
+      o.frequency.value = f;
+      o.connect(lp);
+      o.start();
+      return o;
+    });
+    lp.connect(g).connect(master);
+    const lfo = c.createOscillator();       // slow filter sweep for movement
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.05;
+    const lfoGain = c.createGain();
+    lfoGain.gain.value = 360;
+    lfo.connect(lfoGain).connect(lp.frequency);
+    lfo.start();
+    g.gain.setTargetAtTime(0.12, c.currentTime, 1.6); // gentle fade-in
+    pad = { g, oscs, lfo };
+  }
+  function stopPad() {
+    if (!pad || !ctx) return;
+    const t = ctx.currentTime;
+    pad.g.gain.setTargetAtTime(0.0001, t, 0.4);
+    pad.oscs.concat([pad.lfo]).forEach((o) => { try { o.stop(t + 1.4); } catch (e) { /* ignore */ } });
+    pad = null;
+  }
+  function arpTick() {
+    if (!ambientWanted || muted) return;
+    const f = ARP[arpStep % ARP.length];
+    arpStep++;
+    tone({ freq: f, type: 'square', dur: 0.18, gain: 0.05 });
+    if (arpStep % 4 === 0) tone({ freq: 55, type: 'triangle', dur: 0.3, gain: 0.06 }); // bass pulse
+    if (arpStep % 16 === 0) noise({ dur: 0.03, gain: 0.05, type: 'highpass', freq: 6000 }); // hat
+  }
+  function startAmbient() {
+    ambientWanted = true;
+    if (muted) return;
+    ensureCtx();
+    startPad();
+    if (!arpTimer) arpTimer = setInterval(arpTick, 300);
+  }
+  function stopAmbient(forget) {
+    if (forget) ambientWanted = false;
+    stopPad();
+    if (arpTimer) { clearInterval(arpTimer); arpTimer = null; }
+  }
+
   const SFX = {
     hover() { tone({ freq: 660, type: 'square', dur: 0.05, gain: 0.18 }); },
     click() {
@@ -89,11 +153,23 @@
       tone({ freq: 220, type: 'sawtooth', dur: 0.2, gain: 0.35, glideTo: 100 });
       noise({ dur: 0.12, gain: 0.14, type: 'lowpass', freq: 400 });
     },
+    powerUp() {
+      tone({ freq: 130, type: 'sawtooth', dur: 0.5, gain: 0.22, glideTo: 520 });
+      tone({ freq: 261, type: 'square', dur: 0.42, gain: 0.12, glideTo: 1040, delay: 0.05 });
+      noise({ dur: 0.3, gain: 0.1, type: 'bandpass', freq: 1200 });
+    },
+    whoosh() { noise({ dur: 0.3, gain: 0.16, type: 'bandpass', freq: 900 }); },
+    blip() { tone({ freq: 1600, type: 'square', dur: 0.03, gain: 0.08 }); },
+    startAmbient() { startAmbient(); },
+    stopAmbient() { stopAmbient(true); },
+    ambientPlaying() { return ambientWanted; },
     isMuted() { return muted; },
     setMuted(v) {
       muted = !!v;
       try { localStorage.setItem(STORAGE_KEY, muted ? '1' : '0'); } catch (e) { /* ignore */ }
       updateToggle();
+      if (muted) stopAmbient(false);
+      else if (ambientWanted) startAmbient();
     },
     toggle() {
       const willUnmute = muted;

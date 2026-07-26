@@ -26,6 +26,7 @@
 
     function typeNext() {
       if (lineIndex >= bootLines.length) {
+        if (window.SFX) SFX.powerUp();
         setTimeout(() => {
           preloader.classList.add('hide');
           startGuidedFlow();
@@ -62,7 +63,7 @@
     function begin() {
       if (gate) gate.classList.add('hidden');
       if (box) box.classList.remove('pending');
-      if (window.SFX) SFX.click();
+      if (window.SFX) { SFX.click(); SFX.startAmbient(); }
       runBootSequence();
     }
 
